@@ -168,8 +168,6 @@ public class EntityBag extends Entity implements IInventory
         	if(this.worldObj.isRemote && damageType.getEntity() == FMLClientHandler.instance().getClient().thePlayer)
         	{
         		this.renderNameTicks = 70;
-        		
-        		FMLLog.info("Bag hit");
         	}
         	return false;
         }

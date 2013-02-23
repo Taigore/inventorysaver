@@ -10,6 +10,7 @@ import net.minecraft.src.Tessellator;
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.FMLLog;
 
 import taigore.inventorysaver.EntityBag;
 import taigore.inventorysaver.InventorySaver;
@@ -35,10 +36,9 @@ public class RenderBag extends Render
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 			GL11.glScalef(-1.0f, -1.0f, 1.0F);
 			this.bagModel.render(toRender, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f / 16f);
-			
-			this.renderName(toRender);
-			
 			GL11.glPopMatrix();
+			
+			this.renderName(toRender, renderX, renderY, renderZ);
 		}
 		catch (Exception graphicException)
         {
@@ -46,21 +46,20 @@ public class RenderBag extends Render
         }
 	}
 	
-	protected void renderName(EntityBag toRender)
+	protected void renderName(EntityBag toRender, double renderX, double renderY, double renderZ)
     {
         if (Minecraft.isGuiEnabled() && toRender.renderNameTicks > 0)
         {
             float var8 = 1.6F;
             float var9 = 0.016666668F * var8;
             double playerDistance = toRender.getDistanceSqToEntity(this.renderManager.livingPlayer);
-            float nameTagHeight = (toRender.height + toRender.yOffset) * 1.5f;
+            float nameTagHeight = (toRender.height + toRender.yOffset) * 1.1f;
             String nameTag = toRender.getOwnerName() + "'s spoils";
 
             if (playerDistance < (64.0d * 64.0d))
             {
-                FontRenderer nameRenderer = this.getFontRendererFromRenderManager();
                 GL11.glPushMatrix();
-                GL11.glTranslatef(0.0f, nameTagHeight, 0.0f);
+                GL11.glTranslatef((float)renderX, (float)renderY + nameTagHeight, (float)renderZ);
                 GL11.glNormal3f(0.0F, 1.0f, 0.0f);
                 GL11.glRotatef(-this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
                 GL11.glRotatef(this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
@@ -74,24 +73,25 @@ public class RenderBag extends Render
                 GL11.glDisable(GL11.GL_TEXTURE_2D);
                 
                 //Paints the dark grey background
-                Tessellator var15 = Tessellator.instance;
+                Tessellator tessellator = Tessellator.instance;
+                FontRenderer nameRenderer = this.getFontRendererFromRenderManager();
                 int halfNameTagWidth = nameRenderer.getStringWidth(nameTag) / 2;
-                var15.startDrawingQuads();
-                var15.setColorRGBA_F(0.0F, 0.0F, 0.0F, 0.25F);
-                var15.addVertex((double)(-halfNameTagWidth - 1), -1.0D, 0.0D);
-                var15.addVertex((double)(-halfNameTagWidth - 1), 8.0D, 0.0D);
-                var15.addVertex((double)(halfNameTagWidth + 1), 8.0D, 0.0D);
-                var15.addVertex((double)(halfNameTagWidth + 1), -1.0D, 0.0D);
-                var15.draw();
+                tessellator.startDrawingQuads();
+                tessellator.setColorRGBA_F(0.0F, 0.0F, 0.0F, 0.25F);
+                tessellator.addVertex((double)(-halfNameTagWidth - 1), -1.0D, 0.0D);
+                tessellator.addVertex((double)(-halfNameTagWidth - 1), 8.0D, 0.0D);
+                tessellator.addVertex((double)(halfNameTagWidth + 1), 8.0D, 0.0D);
+                tessellator.addVertex((double)(halfNameTagWidth + 1), -1.0D, 0.0D);
+                tessellator.draw();
                 
                 //Paints the semi-transparent string you can see through walls
                 GL11.glEnable(GL11.GL_TEXTURE_2D);
-                nameRenderer.drawString(nameTag, -halfNameTagWidth, 0, 553648127);
+                nameRenderer.drawString(nameTag, -halfNameTagWidth, 0, 0x80FFFFFF);
                 
                 //Paints the white string you can see while in line of sight
                 GL11.glEnable(GL11.GL_DEPTH_TEST);
                 GL11.glDepthMask(true);
-                nameRenderer.drawString(nameTag, -halfNameTagWidth, 0, -1);
+                nameRenderer.drawString(nameTag, -halfNameTagWidth, 0, 0xFFFFFFFF);
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                 GL11.glEnable(GL11.GL_LIGHTING);
                 GL11.glDisable(GL11.GL_BLEND);
