@@ -3,18 +3,16 @@ package taigore.inventorysaver;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.src.DamageSource;
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityItem;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.NBTTagList;
-import net.minecraft.src.World;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.DamageSource;
+import net.minecraft.world.World;
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.FMLLog;
 
 public class EntityBag extends Entity implements IInventory
 {
@@ -57,7 +55,9 @@ public class EntityBag extends Entity implements IInventory
 		{
 			if(toSave != null)
 			{
-				this.bagContents.add(toSave.item);
+				//Func_92014_d: method to access dataWatcher object 10
+				//Returns the item stack held by the entity.
+				this.bagContents.add(toSave.func_92014_d());
 			}
 		}
 		

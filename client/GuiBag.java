@@ -1,9 +1,10 @@
 package taigore.inventorysaver.client;
 
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.entity.player.InventoryPlayer;
+
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.src.GuiContainer;
-import net.minecraft.src.InventoryPlayer;
 import taigore.inventorysaver.ContainerBag;
 import taigore.inventorysaver.EntityBag;
 import taigore.inventorysaver.ProxyCommonInvSaver;

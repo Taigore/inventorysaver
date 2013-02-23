@@ -1,20 +1,17 @@
 package taigore.inventorysaver;
 
-import java.lang.reflect.Constructor;
-
-import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.asm.SideOnly;
-
-import net.minecraft.src.Block;
-import net.minecraft.src.Container;
-import net.minecraft.src.ContainerPlayer;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.InventoryPlayer;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemArmor;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.Slot;
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ContainerPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemStack;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ContainerBag extends Container
 {
@@ -109,36 +106,46 @@ public class ContainerBag extends Container
 	
 	/**
 	 * Shameless copy. Thanks for setting it default visibility, Notch!
+	 * Thanks for not fixing the visibility in 1.4.7, Jeb!
 	 */
 	private class SlotArmor extends Slot
 	{
-	    /**
+		/**
 	     * The armor type that can be placed on that slot, it uses the same values of armorType field on ItemArmor.
 	     */
 	    final int armorType;
-
-	    public SlotArmor(IInventory par2IInventory, int par3, int par4, int par5, int par6)
+	
+	    SlotArmor(IInventory par2IInventory, int par3, int par4, int par5, int par6)
 	    {
 	        super(par2IInventory, par3, par4, par5);
 	        this.armorType = par6;
 	    }
-	    
+	
+	    /**
+	     * Returns the maximum stack size for a given slot (usually the same as getInventoryStackLimit(), but 1 in the case
+	     * of armor slots)
+	     */
+	    public int getSlotStackLimit()
+	    {
+	        return 1;
+	    }
+	
 	    /**
 	     * Check if the stack is a valid item for this slot. Always true beside for the armor slots.
 	     */
 	    public boolean isItemValid(ItemStack par1ItemStack)
 	    {
-	        return par1ItemStack == null ? false : (par1ItemStack.getItem() instanceof ItemArmor ? ((ItemArmor)par1ItemStack.getItem()).armorType == this.armorType : (par1ItemStack.getItem().shiftedIndex != Block.pumpkin.blockID && par1ItemStack.getItem().shiftedIndex != Item.skull.shiftedIndex ? false : this.armorType == 0));
+	        return par1ItemStack == null ? false : (par1ItemStack.getItem() instanceof ItemArmor ? ((ItemArmor)par1ItemStack.getItem()).armorType == this.armorType : (par1ItemStack.getItem().itemID != Block.pumpkin.blockID && par1ItemStack.getItem().itemID != Item.skull.itemID ? false : this.armorType == 0));
 	    }
+	
+	    @SideOnly(Side.CLIENT)
+	
 	    /**
 	     * Returns the icon index on items.png that is used as background image of the slot.
 	     */
-	    @SideOnly(Side.CLIENT)
-	    public int getBackgroundIconIndex() { return 15 + this.armorType * 16; }
-	    /**
-	     * Returns the maximum stack size for a given slot (usually the same as getInventoryStackLimit(), but 1 in the case
-	     * of armor slots)
-	     */
-	    public int getSlotStackLimit() { return 1; }
+	    public int getBackgroundIconIndex()
+	    {
+	        return 15 + this.armorType * 16;
+	    }
 	}
 }

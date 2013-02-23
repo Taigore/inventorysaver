@@ -2,12 +2,11 @@ package taigore.inventorysaver;
 
 import java.util.ArrayList;
 
-import net.minecraft.src.EntityItem;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.World;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
-import cpw.mods.fml.common.FMLLog;
 
 public class InvSaverEventHandler
 {

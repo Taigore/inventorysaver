@@ -1,16 +1,13 @@
 package taigore.inventorysaver.client;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.Entity;
-import net.minecraft.src.FontRenderer;
-import net.minecraft.src.ModelBase;
-import net.minecraft.src.Render;
-import net.minecraft.src.Tessellator;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.entity.Entity;
 
 import org.lwjgl.opengl.GL11;
-
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.FMLLog;
 
 import taigore.inventorysaver.EntityBag;
 import taigore.inventorysaver.InventorySaver;

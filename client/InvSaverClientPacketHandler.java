@@ -1,11 +1,10 @@
 package taigore.inventorysaver.client;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.INetworkManager;
-import net.minecraft.src.Packet250CustomPayload;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.Packet250CustomPayload;
 import taigore.inventorysaver.EntityBag;
 import taigore.inventorysaver.Packet250BagSync;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;

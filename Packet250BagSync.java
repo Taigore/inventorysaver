@@ -7,12 +7,12 @@ import java.io.DataOutputStream;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.minecraft.src.CrashReport;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.Packet;
-import net.minecraft.src.Packet250CustomPayload;
-import net.minecraft.src.ReportedException;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.util.ReportedException;
 import taigore.inventorysaver.client.InvSaverClientPacketHandler;
 
 public class Packet250BagSync extends Packet250CustomPayload
@@ -61,7 +61,7 @@ public class Packet250BagSync extends Packet250CustomPayload
 			}
 			catch(Exception exc)
 			{
-				CrashReport rep = CrashReport.func_85055_a(exc, "Taigore InventorySaver: failed an I/O operation while creating a custom packet");
+				CrashReport rep = CrashReport.makeCrashReport(exc, "Taigore InventorySaver: failed an I/O operation while creating a custom packet");
 				throw new ReportedException(rep);
 			}
 			
@@ -105,7 +105,7 @@ public class Packet250BagSync extends Packet250CustomPayload
 			}
 			catch(Exception exc)
 			{
-				CrashReport rep = CrashReport.func_85055_a(exc, "Taigore InventorySaver: failed an I/O operation while reading a custom packet");
+				CrashReport rep = CrashReport.makeCrashReport(exc, "Taigore InventorySaver: failed an I/O operation while reading a custom packet");
 				throw new ReportedException(rep);
 			}
 			
