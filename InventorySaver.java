@@ -1,27 +1,30 @@
 package taigore.inventorysaver;
 
-import java.util.ArrayList;
-
-import net.minecraft.src.EntityItem;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.World;
+import taigore.inventorysaver.client.InvSaverClientPacketHandler;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeSubscribe;
-import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.Init;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.asm.SideOnly;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 
-@Mod(modid="Taigore_InventorySaver", useMetadata=true)
-@NetworkMod(clientSideRequired=true, serverSideRequired=false)
+@Mod
+(
+	modid="Taigore_InventorySaver",
+	useMetadata=true
+)
+@NetworkMod
+(
+	clientSideRequired=true,
+	serverSideRequired=false,
+	clientPacketHandlerSpec=@SidedPacketHandler
+	(
+		packetHandler=InvSaverClientPacketHandler.class,
+		channels={InvSaverClientPacketHandler.chanBagInventorySync}
+	)
+)
 public class InventorySaver
 {
     // The instance of your mod that Forge uses.

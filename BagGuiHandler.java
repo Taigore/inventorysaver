@@ -1,14 +1,15 @@
 package taigore.inventorysaver;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.util.List;
 
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.World;
 import taigore.inventorysaver.client.GuiBag;
 import cpw.mods.fml.common.network.IGuiHandler;
+import cpw.mods.fml.common.network.PacketDispatcher;
+import cpw.mods.fml.common.network.Player;
 
 public class BagGuiHandler implements IGuiHandler
 {
@@ -22,7 +23,10 @@ public class BagGuiHandler implements IGuiHandler
 			for(EntityBag toCheck : bagsInTheBlock)
 			{
 				if(toCheck.clicker == player)
+				{
+					PacketDispatcher.sendPacketToPlayer(new Packet250BagSync(toCheck), (Player)player);
 					return new ContainerBag(player.inventory, toCheck);
+				}
 			}
 		}
 		return null;
@@ -40,19 +44,6 @@ public class BagGuiHandler implements IGuiHandler
 				if(toCheck.clicker == player)
 				{
 					toCheck.clicker = null;
-					
-					try
-					{
-						byte[] outgoingData;
-						ByteArrayOutputStream byteWriter = new ByteArrayOutputStream();
-						DataOutputStream dataConverter = new DataOutputStream(byteWriter);
-						
-						
-					}
-					catch(Exception exc)
-					{
-						
-					}
 					
 					return new GuiBag(player.inventory, toCheck);
 				}

@@ -3,6 +3,7 @@ package taigore.inventorysaver;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.src.DamageSource;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityItem;
@@ -84,15 +85,10 @@ public class EntityBag extends Entity implements IInventory
 	@Override
 	public ItemStack getStackInSlot(int slotNum)
 	{
-		while(this.bagContents.size() > slotNum)
-		{
-			if(this.bagContents.get(slotNum) != null)
-				return this.bagContents.get(slotNum);
-			else
-				this.bagContents.remove(slotNum);
-		}
-		
-		return null;
+		if(this.bagContents.size() > slotNum)
+			return this.bagContents.get(slotNum);
+		else
+			return null;
 	}
 	@Override
 	public ItemStack decrStackSize(int slotNum, int amount)
@@ -102,22 +98,34 @@ public class EntityBag extends Entity implements IInventory
 		if(inSlot != null && amount > 0)
 		{
 			if(inSlot.stackSize <= amount)
+			{
+				this.bagContents.remove(slotNum);
 				return inSlot;
+			}
 			else
 			{
-				ItemStack subStack = inSlot.copy();
-				
-				inSlot.stackSize -= amount;
-				subStack.stackSize = amount;
-				
-				return subStack;
+				return inSlot.splitStack(amount);
 			}
 		}
 		else
 			return null;
 	}
 	@Override
-	public void setInventorySlotContents(int slotNum, ItemStack toSet) {}
+	public void setInventorySlotContents(int slotNum, ItemStack toSet)
+	{
+		if(toSet == null || toSet.stackSize == 0)
+		{
+			if(this.bagContents.size() > slotNum)
+				this.bagContents.remove(slotNum);
+		}
+		else
+		{
+			if(this.bagContents.size() <= slotNum)
+				this.bagContents.add(toSet);
+			else
+				this.bagContents.set(slotNum, toSet);
+		}
+	}
 	@Override
 	public int getSizeInventory() { return 28; }
 	@Override
