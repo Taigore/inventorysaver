@@ -20,12 +20,12 @@ public class Packet250BagSync extends Packet250CustomPayload
 	public int entityID;
 	public List<ItemStack> inventory;
 	
-	public Packet250BagSync(EntityBag toSync)
-	{
-		super(InvSaverClientPacketHandler.chanBagInventorySync, encodeBagToByteArray(toSync));
-	}
 	public Packet250BagSync() {}
 
+	public static Packet250CustomPayload makePacket(EntityBag toSync)
+	{
+		return new Packet250CustomPayload(InvSaverClientPacketHandler.chanBagInventorySync, encodeBagToByteArray(toSync));
+	}
 	private static byte[] encodeBagToByteArray(EntityBag toEncode)
 	{
 		if(toEncode != null)

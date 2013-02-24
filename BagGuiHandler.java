@@ -23,7 +23,7 @@ public class BagGuiHandler implements IGuiHandler
 			{
 				if(toCheck.clicker == player)
 				{
-					PacketDispatcher.sendPacketToPlayer(new Packet250BagSync(toCheck), (Player)player);
+					PacketDispatcher.sendPacketToPlayer(Packet250BagSync.makePacket(toCheck), (Player)player);
 					return new ContainerBag(player.inventory, toCheck);
 				}
 			}
