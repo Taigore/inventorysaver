@@ -85,7 +85,9 @@ public class EntityBag extends Entity implements IInventory
 	@Override
 	public ItemStack getStackInSlot(int slotNum)
 	{
-		if(this.bagContents.size() > slotNum)
+		if(slotNum < 0 || slotNum >= this.getSizeInventory())
+			throw new IllegalArgumentException("Taigore InventorySaver: slot number out of bounds");
+		else if(slotNum < this.bagContents.size())
 			return this.bagContents.get(slotNum);
 		else
 			return null;
@@ -127,7 +129,7 @@ public class EntityBag extends Entity implements IInventory
 		}
 	}
 	@Override
-	public int getSizeInventory() { return 28; }
+	public int getSizeInventory() { return 48; }
 	@Override
 	public ItemStack getStackInSlotOnClosing(int slotNum) { return null; }
 	@Override
