@@ -1,5 +1,6 @@
 package taigore.inventorysaver.client;
 
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 
@@ -26,5 +27,17 @@ public class GuiBag extends GuiContainer
 		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		this.mc.renderEngine.bindTexture(guiBackground);
 		this.drawTexturedModalRect(guiX, guiY, 0, 0, xSize, ySize);
+	}
+	
+	@Override
+	public void initGui()
+	{
+		super.initGui();
+		
+		int guiX = (this.width - this.xSize) / 2;
+		int guiY = (this.height - this.ySize) / 2;
+		
+		this.controlList.add(new GuiButton(1, guiX + 35, guiY +  9, 15, 15, "T"));
+		this.controlList.add(new GuiButton(2, guiX + 35, guiY + 27, 15, 15, "S"));
 	}
 }

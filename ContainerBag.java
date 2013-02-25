@@ -23,12 +23,18 @@ public class ContainerBag extends Container
 		this.bagInventory = openedBag;
 		this.playerInventory = playerInventory;
 		
-		int startingX = 44;
+		int startingX = 62;
 		int startingY = 8;
 		
-		for(int i = 0; i < openedBag.getSizeInventory(); i++)
+		int rows = 4;
+		int columns = 6;
+		
+		for(int i = 0; i < rows; i++)
 		{
-			this.addSlotToContainer(new SlotBag(openedBag, i, startingX + 18 * (i % 7), startingY + 18 * (i / 7)));
+			for(int j = 0; j < columns; j++)
+			{
+				this.addSlotToContainer(new SlotBag(openedBag, i * columns + j, startingX + 18 * j, startingY + 18 * i));
+			}
 		}
 		
 		for(int i = 0; i < 4; ++i)
