@@ -16,8 +16,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class ContainerBag extends Container
 {
-	private InventoryBag bagInventory;
-	private InventoryPlayer playerInventory;
+	public final InventoryBag bagInventory;
+	public final InventoryPlayer playerInventory;
 	
 	public ContainerBag(InventoryPlayer playerInventory, EntityBag openedBag)
 	{

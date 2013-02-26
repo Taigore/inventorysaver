@@ -3,6 +3,8 @@ package taigore.inventorysaver.client;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 
 import org.lwjgl.opengl.GL11;
 
@@ -38,6 +40,30 @@ public class GuiBag extends GuiContainer
 		int guiY = (this.height - this.ySize) / 2;
 		
 		this.controlList.add(new GuiButton(1, guiX + 35, guiY +  9, 15, 15, "T"));
-		this.controlList.add(new GuiButton(2, guiX + 35, guiY + 27, 15, 15, "S"));
+//		this.controlList.add(new GuiButton(2, guiX + 35, guiY + 27, 15, 15, "S"));
+	}
+	
+	protected void actionPerformed(GuiButton pressed)
+	{
+        //id is the id you give your button
+        switch(pressed.id)
+        {
+        	case 1: //Take everything (Button T)
+        		Slot firstBagSlot = this.inventorySlots.getSlotFromInventory(((ContainerBag)this.inventorySlots).bagInventory, 0);
+        		
+        		ItemStack prevItemStack;
+        		
+        		do
+        		{
+        			prevItemStack = firstBagSlot.getStack();
+        			
+        			this.handleMouseClick(firstBagSlot, firstBagSlot.slotNumber, 0, 1);
+        		}
+        		while(firstBagSlot.getHasStack() && firstBagSlot.getStack() != prevItemStack && firstBagSlot.getStack().stackSize != prevItemStack.stackSize);
+        		
+                break;
+//        	case 2: //Switch page (Button S)
+                
+        }
 	}
 }
