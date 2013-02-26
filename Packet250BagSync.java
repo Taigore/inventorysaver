@@ -43,9 +43,9 @@ public class Packet250BagSync extends Packet250CustomPayload
 					//Second int - amount of stacks
 					//Subsequent data - item stacks in NBT format
 					dataConverter.writeInt(toEncode.entityId);
-					dataConverter.writeInt(toEncode.bagContents.size());
+					dataConverter.writeInt(toEncode.inventory.inventory.size());
 					
-					for(ItemStack toSend : toEncode.bagContents)
+					for(ItemStack toSend : toEncode.inventory.inventory)
 					{
 						Packet.writeNBTTagCompound(toSend.writeToNBT(new NBTTagCompound()), dataConverter);
 					}

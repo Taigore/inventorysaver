@@ -1,5 +1,6 @@
 package taigore.inventorysaver;
 
+import taigore.inventorysaver.EntityBag.InventoryBag;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -15,12 +16,12 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class ContainerBag extends Container
 {
-	private EntityBag bagInventory;
+	private InventoryBag bagInventory;
 	private InventoryPlayer playerInventory;
 	
 	public ContainerBag(InventoryPlayer playerInventory, EntityBag openedBag)
 	{
-		this.bagInventory = openedBag;
+		this.bagInventory = openedBag.inventory;
 		this.playerInventory = playerInventory;
 		
 		int startingX = 62;
@@ -60,7 +61,7 @@ public class ContainerBag extends Container
     {
 		//The bag is take only, so I don't bother to handle shift click from the
 		//player's inventory.
-		if(clickedSlotID < this.bagInventory.getSizeInventory())
+		if(clickedSlotID < bagInventory.getSizeInventory())
 		{
 			//Tries to merge the ItemStack with the player inventory.
 			//It uses the calling routine to get re-called in case the stack
@@ -96,15 +97,15 @@ public class ContainerBag extends Container
 	{
 		super.onCraftGuiClosed(par1EntityPlayer);
 		
-		this.bagInventory.clicker = null;
+		this.bagInventory.getEntity().clicker = null;
 	}
 	
 	@Override
-	public boolean canInteractWith(EntityPlayer var1) { return !this.bagInventory.isDead; }
+	public boolean canInteractWith(EntityPlayer interactor) { return !bagInventory.getEntity().isDead; }
 	
 	private class SlotBag extends Slot
 	{
-		public SlotBag(EntityBag managedBag, int par2, int par3, int par4) { super(managedBag, par2, par3, par4); }
+		public SlotBag(EntityBag managedBag, int slotIndex, int slotX, int slotY) { super(managedBag.inventory, slotIndex, slotX, slotY); }
 		
 		@Override
 		public boolean isItemValid(ItemStack toCheck) { return false; }

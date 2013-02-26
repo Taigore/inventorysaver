@@ -31,8 +31,8 @@ public class InvSaverClientPacketHandler implements IPacketHandler
 		if(receiver != null)
 		{
 			//What was saved in the bag is outdated anyway
-			receiver.bagContents.clear();
-			receiver.bagContents.addAll(toRelay.inventory);
+			receiver.inventory.inventory.clear();
+			receiver.inventory.inventory.addAll(toRelay.inventory);
 		}
 	}
 }
