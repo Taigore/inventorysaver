@@ -10,7 +10,9 @@ import org.lwjgl.opengl.GL11;
 
 import taigore.inventorysaver.ContainerBag;
 import taigore.inventorysaver.EntityBag;
-import taigore.inventorysaver.ProxyCommonInvSaver;
+import taigore.inventorysaver.Packet250Helper;
+import taigore.inventorysaver.ProxyCommon;
+import cpw.mods.fml.common.network.PacketDispatcher;
 
 public class GuiBag extends GuiContainer
 {
@@ -22,7 +24,7 @@ public class GuiBag extends GuiContainer
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3)
 	{
-		int guiBackground = this.mc.renderEngine.getTexture(ProxyCommonInvSaver.BAGGUI_TEXTURE);
+		int guiBackground = this.mc.renderEngine.getTexture(ProxyCommon.BAGGUI_TEXTURE);
 		int guiX = (this.width - this.xSize) / 2;
 		int guiY = (this.height - this.ySize) / 2;
 		
@@ -39,8 +41,8 @@ public class GuiBag extends GuiContainer
 		int guiX = (this.width - this.xSize) / 2;
 		int guiY = (this.height - this.ySize) / 2;
 		
-		this.controlList.add(new GuiButton(1, guiX + 35, guiY +  9, 15, 15, "T"));
-//		this.controlList.add(new GuiButton(2, guiX + 35, guiY + 27, 15, 15, "S"));
+		this.controlList.add(new GuiButton(1, guiX + 33, guiY +  6, 20, 20, "T"));
+		this.controlList.add(new GuiButton(2, guiX + 33, guiY + 42, 20, 20, "S"));
 	}
 	
 	protected void actionPerformed(GuiButton pressed)
@@ -62,8 +64,11 @@ public class GuiBag extends GuiContainer
         		while(firstBagSlot.getHasStack() && firstBagSlot.getStack() != prevItemStack && firstBagSlot.getStack().stackSize != prevItemStack.stackSize);
         		
                 break;
-//        	case 2: //Switch page (Button S)
-                
+        	case 2: //Switch page (Button S)
+        		/*
+        		EntityBag toSwitch = ((ContainerBag)this.inventorySlots).bagInventory.getEntity();
+        		PacketDispatcher.sendPacketToServer(Packet250Helper.makeEntityPingPacket(toSwitch));*/
+        		((ContainerBag)this.inventorySlots).bagInventory.switchPage();
         }
 	}
 }

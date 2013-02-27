@@ -2,10 +2,10 @@ package taigore.inventorysaver.client;
 
 import net.minecraftforge.client.MinecraftForgeClient;
 import taigore.inventorysaver.EntityBag;
-import taigore.inventorysaver.ProxyCommonInvSaver;
+import taigore.inventorysaver.ProxyCommon;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
-public class ProxyClientInvSaver extends ProxyCommonInvSaver
+public class ProxyClient extends ProxyCommon
 {
 	//Client only
 	@Override
