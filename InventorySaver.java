@@ -1,6 +1,5 @@
 package taigore.inventorysaver;
 
-import taigore.inventorysaver.client.InvSaverClientPacketHandler;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
@@ -21,8 +20,13 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 	serverSideRequired=false,
 	clientPacketHandlerSpec=@SidedPacketHandler
 	(
-		packetHandler=InvSaverClientPacketHandler.class,
-		channels={InvSaverClientPacketHandler.chanBagInventorySync}
+		packetHandler=PacketHandler.class,
+		channels={PacketHandler.chanInventorySync}
+	),
+	serverPacketHandlerSpec=@SidedPacketHandler
+	(
+		packetHandler=PacketHandler.class,
+		channels={PacketHandler.chanEntityPing}
 	)
 )
 public class InventorySaver
@@ -32,8 +36,8 @@ public class InventorySaver
 	public static InventorySaver instance;
 	
 	// Says where the client and server 'proxy' code is loaded.
-	@SidedProxy(clientSide="taigore.inventorysaver.client.ProxyClientInvSaver", serverSide="taigore.inventorysaver.ProxyCommonInvSaver")
-	public static ProxyCommonInvSaver proxy;
+	@SidedProxy(clientSide="taigore.inventorysaver.client.ProxyClient", serverSide="taigore.inventorysaver.ProxyCommon")
+	public static ProxyCommon proxy;
 	
 	@Mod.Init
 	public void Initialization(FMLInitializationEvent event)
@@ -42,7 +46,7 @@ public class InventorySaver
 		
 		proxy.registerRenderers();
 		
-		MinecraftForge.EVENT_BUS.register(new InvSaverEventHandler());
-		NetworkRegistry.instance().registerGuiHandler(this, new BagGuiHandler());
+		MinecraftForge.EVENT_BUS.register(new EventHandler());
+		NetworkRegistry.instance().registerGuiHandler(this, new GuiHandler());
 	}
 }

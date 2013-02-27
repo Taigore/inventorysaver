@@ -93,16 +93,11 @@ public class ContainerBag extends Container
     }
 	
 	@Override
-	public void onCraftGuiClosed(EntityPlayer par1EntityPlayer)
-	{
-		super.onCraftGuiClosed(par1EntityPlayer);
-		
-		this.bagInventory.getEntity().clicker = null;
-	}
-	
-	@Override
 	public boolean canInteractWith(EntityPlayer interactor) { return !bagInventory.getEntity().isDead; }
 	
+	/**
+	 * Simple "no input" slot
+	 */
 	private class SlotBag extends Slot
 	{
 		public SlotBag(EntityBag managedBag, int slotIndex, int slotX, int slotY) { super(managedBag.inventory, slotIndex, slotX, slotY); }

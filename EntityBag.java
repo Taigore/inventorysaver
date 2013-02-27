@@ -76,14 +76,11 @@ public class EntityBag extends Entity
 	protected void entityInit()
 	{
 		this.dataWatcher.addObject(dwOwnerName, String.valueOf(""));
-		this.dataWatcher.addObject(dwInventoryPage, Integer.valueOf(0));
 	}
 	
 	///////////
 	// Entity
 	///////////
-	protected EntityPlayer clicker = null;
-	
 	/**
      * Called when the entity is attacked.
      * The bag is invulnerable, but it will be destroyed if it gets any damage from
@@ -159,17 +156,11 @@ public class EntityBag extends Entity
     		//Sets up this field to allow for clicked bag recognition from the GuiHandler.
     		//Only the first click actually triggers an opened bag, though. All subsequent clicks 
     		//won't work, until both the client and the server side GUIs has been opened.
-    		//TODO Magheggi con gli argomenti. Passare entityID e aprire con quello
-    		if(this.clicker == null)
+    		if(!this.worldObj.isRemote)
     		{
-	    		this.clicker = interacting;
-	    		
-	    		if(!this.worldObj.isRemote)
-	    		{
-					interacting.openGui(InventorySaver.instance, 1, this.worldObj, (int)Math.floor(this.posX), (int)Math.floor(this.posY), (int)Math.floor(this.posZ));
-	    		}
+				interacting.openGui(InventorySaver.instance, 1, this.worldObj, this.entityId, 0, 0);
     		}
-			return true;
+    		return true;
     	}
     	else
     	{
@@ -227,7 +218,6 @@ public class EntityBag extends Entity
 	// Data Sync
 	//////////////
 	private final static int dwOwnerName = 30;
-	private final static int dwInventoryPage = 29;
 	
 	/**
 	 * Returns the owner name of the bag.
@@ -277,26 +267,20 @@ public class EntityBag extends Entity
 		//The two pages of this multi-page inventory
 		public static final int pages = 2;
 		public final LinkedList<ItemStack> inventory = new LinkedList();
+		public int page = 0;
 		
 		private InventoryBag() {}
 
 		public EntityBag getEntity() { return EntityBag.this; }
 		
-		public int getCurrentPage() { return EntityBag.this.dataWatcher.getWatchableObjectInt(EntityBag.dwInventoryPage); }
+		public int getCurrentPage() { return this.page; }
 		public void switchPage()
 		{
-			if(EntityBag.this.worldObj.isRemote)
-			{
-				//TODO Client-side page switch (PacketHandler)
-			}
-			else
-			{
-				int currentPage = this.getCurrentPage() + 1;
-				
-				if(currentPage >= pages) currentPage = 0;
-				
-				EntityBag.this.dataWatcher.updateObject(EntityBag.dwInventoryPage, Integer.valueOf(currentPage));
-			}
+			int currentPage = this.getCurrentPage() + 1;
+			
+			if(currentPage >= pages) currentPage = 0;
+			
+			this.page = currentPage;
 		}
 		
 		/**
