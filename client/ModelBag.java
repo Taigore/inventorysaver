@@ -48,9 +48,6 @@ public class ModelBag extends ModelBase
 			float ModelOriginY = -OriginPoints[i * 3 + 1] + OriginOffsets[1];
 			float ModelOriginZ =  OriginPoints[i * 3 + 2] + OriginOffsets[2];
 			
-			int TextureOffsetX = TextureOffsets[i * 2];
-			int TextureOffsetY = TextureOffsets[i * 2 + 1];
-			
 			bagModel[i] = new ModelRenderer(this, TextureOffsets[i * 2], TextureOffsets[i * 2 + 1]);
 			bagModel[i].setTextureSize(32, 32);
 			

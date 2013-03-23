@@ -1,9 +1,6 @@
 package taigore.inventorysaver;
 
-import java.util.List;
-
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import taigore.inventorysaver.client.GuiBag;
 import cpw.mods.fml.common.network.IGuiHandler;

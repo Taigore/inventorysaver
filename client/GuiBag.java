@@ -10,9 +10,7 @@ import org.lwjgl.opengl.GL11;
 
 import taigore.inventorysaver.ContainerBag;
 import taigore.inventorysaver.EntityBag;
-import taigore.inventorysaver.Packet250Helper;
-import taigore.inventorysaver.ProxyCommon;
-import cpw.mods.fml.common.network.PacketDispatcher;
+import taigore.inventorysaver.InventorySaver;
 
 public class GuiBag extends GuiContainer
 {
@@ -20,17 +18,13 @@ public class GuiBag extends GuiContainer
 	{
 		super(new ContainerBag(playerInventory, openedBag));
 	}
-
+	
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3)
 	{
-		int guiBackground = this.mc.renderEngine.getTexture(ProxyCommon.BAGGUI_TEXTURE);
-		int guiX = (this.width - this.xSize) / 2;
-		int guiY = (this.height - this.ySize) / 2;
-		
 		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-		this.mc.renderEngine.bindTexture(guiBackground);
-		this.drawTexturedModalRect(guiX, guiY, 0, 0, xSize, ySize);
+		this.mc.renderEngine.func_98187_b(InventorySaver.proxy.BAGGUI_TEXTURE);
+		this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, xSize, ySize);
 	}
 	
 	@Override
@@ -41,8 +35,8 @@ public class GuiBag extends GuiContainer
 		int guiX = (this.width - this.xSize) / 2;
 		int guiY = (this.height - this.ySize) / 2;
 		
-		this.controlList.add(new GuiButton(1, guiX + 33, guiY +  6, 20, 20, "T"));
-		this.controlList.add(new GuiButton(2, guiX + 33, guiY + 42, 20, 20, "S"));
+		this.buttonList.add(new GuiButton(1, guiX + 33, guiY +  6, 20, 20, "T"));
+		this.buttonList.add(new GuiButton(2, guiX + 33, guiY + 42, 20, 20, "S"));
 	}
 	
 	protected void actionPerformed(GuiButton pressed)

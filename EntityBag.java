@@ -1,7 +1,5 @@
 package taigore.inventorysaver;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -55,17 +53,13 @@ public class EntityBag extends Entity
 	{
 		this(spawnWorld);
 		
-		int index = 0;
-		
 		for(EntityItem toSave : drops)
 		{
 			if(toSave != null)
 			{
 				//Func_92014_d: method to access dataWatcher object 10
 				//Returns the item stack held by the entity.
-				this.inventory.inventory.add(toSave.func_92014_d());
-				
-				index += 1;
+				this.inventory.inventory.add(toSave.getEntityItem());
 			}
 		}
 		
@@ -375,5 +369,11 @@ public class EntityBag extends Entity
 		public void openChest() {}
 		@Override
 		public void closeChest() {}
+
+		@Override
+		public boolean func_94042_c() { return false; }
+
+		@Override
+		public boolean func_94041_b(int i, ItemStack itemstack) { return false; }
 	}
 }
