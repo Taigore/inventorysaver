@@ -369,11 +369,9 @@ public class EntityBag extends Entity
 		public void openChest() {}
 		@Override
 		public void closeChest() {}
-
 		@Override
-		public boolean func_94042_c() { return false; }
-
+		public boolean isInvNameLocalized() { return false; }
 		@Override
-		public boolean func_94041_b(int i, ItemStack itemstack) { return false; }
+		public boolean isStackValidForSlot(int i, ItemStack itemstack) { return false; }
 	}
 }

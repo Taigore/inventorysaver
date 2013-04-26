@@ -23,7 +23,7 @@ public class GuiBag extends GuiContainer
 	protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3)
 	{
 		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-		this.mc.renderEngine.func_98187_b(InventorySaver.proxy.BAGGUI_TEXTURE);
+		this.mc.renderEngine.bindTexture(InventorySaver.proxy.BAGGUI_TEXTURE);
 		this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, xSize, ySize);
 	}
 	
