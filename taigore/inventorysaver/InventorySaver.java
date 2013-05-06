@@ -38,7 +38,7 @@ public class InventorySaver
 	@Mod.Instance("Taigore_InventorySaver")
 	public static InventorySaver instance;
 	
-	@SidedProxy(clientSide="taigore.inventorysaver.client.ProxyClient", serverSide="taigore.inventorysaver.ProxyCommon")
+	@SidedProxy(clientSide="taigore.inventorysaver.proxy.ProxyClient", serverSide="taigore.inventorysaver.proxy.ProxyCommon")
 	public static ProxyCommon proxy;
 	
 	/////////////////
