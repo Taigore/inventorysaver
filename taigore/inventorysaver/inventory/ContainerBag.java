@@ -1,4 +1,4 @@
-package taigore.inventorysaver;
+package taigore.inventorysaver.inventory;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,7 +10,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
-import taigore.inventorysaver.EntityBag.InventoryBag;
+import taigore.inventorysaver.entity.item.EntityBag;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -20,43 +20,55 @@ public class ContainerBag extends Container
 	public final InventoryPlayer playerInventory;
 	
 	public ContainerBag(InventoryPlayer playerInventory, EntityBag openedBag)
-	{
-		this.bagInventory = openedBag.inventory;
-		this.playerInventory = playerInventory;
-		
-		int startingX = 62;
-		int startingY = 8;
-		
-		int rows = 4;
-		int columns = 6;
-		
-		for(int i = 0; i < rows; i++)
-		{
-			for(int j = 0; j < columns; j++)
-			{
-				this.addSlotToContainer(new SlotBag(openedBag, i * columns + j, startingX + 18 * j, startingY + 18 * i));
-			}
-		}
-		
-		for(int i = 0; i < 4; ++i)
+    {
+        this.bagInventory = openedBag.inventory;
+        this.playerInventory = playerInventory;
+        
+        int startingX = 31;
+        int startingY = 9;
+        
+        int rows = 5;
+        int columns = 8;
+        
+        for(int i = 0; i < rows; i++)
         {
-            this.addSlotToContainer(new SlotArmor(playerInventory, playerInventory.getSizeInventory() - 1 - i, 8, 8 + i * 18, i));
+            for(int j = 0; j < columns; j++)
+            {
+                this.addSlotToContainer(new SlotBag(openedBag, i * columns + j, startingX + 18 * j, startingY + 18 * i));
+            }
         }
+        
+        startingX = 9;
+        startingY = 9;
+        
+        for(int i = 0; i < 4; ++i)
+        {
+            this.addSlotToContainer(new SlotArmor(playerInventory, playerInventory.getSizeInventory() - 1 - i, startingX, startingY + i * 18, i));
+        }
+        
+        startingX = 11;
+        startingY = 101;
 
         for (int i = 0; i < 3; ++i)
         {
             for (int j = 0; j < 9; ++j)
             {
-                this.addSlotToContainer(new Slot(playerInventory, j + (i + 1) * 9, 8 + j * 18, 84 + i * 18));
+                this.addSlotToContainer(new Slot(playerInventory, j + (i + 1) * 9, startingX + j * 18, startingY + i * 18));
             }
         }
-
+        
+        startingX = 11;
+        startingY = 159;
+        
         for (int i = 0; i < 9; ++i)
         {
-            this.addSlotToContainer(new Slot(playerInventory, i, 8 + i * 18, 142));
+            this.addSlotToContainer(new Slot(playerInventory, i, startingX + i * 18, startingY));
         }
-	}
+    }
 	
+	//////////////
+	// Container
+	//////////////
 	public ItemStack transferStackInSlot(EntityPlayer playerClicker, int clickedSlotID)
     {
 		//The bag is take only, so I don't bother to handle shift click from the
@@ -65,8 +77,8 @@ public class ContainerBag extends Container
 		{
 			//Tries to merge the ItemStack with the player inventory.
 			//It uses the calling routine to get re-called in case the stack
-			//couldn't get fully merged, otherwise, if the stack was fully merged
-			//or not a single item could have been moved, it stops the recalling.
+			//couldn't get fully merged. If the stack was fully merged
+			//or not a single item has been moved, it stops the recalling.
 			Slot bagSlot = this.getSlot(clickedSlotID);
 			ItemStack stackToMerge = bagSlot.getStack();
 			
@@ -93,8 +105,11 @@ public class ContainerBag extends Container
     }
 	
 	@Override
-	public boolean canInteractWith(EntityPlayer interactor) { return !bagInventory.getEntity().isDead; }
+	public boolean canInteractWith(EntityPlayer interactor) { return !this.bagInventory.getEntity().isDead; }
 	
+	///////////////
+	// Subclasses
+	///////////////
 	/**
 	 * Simple "no input" slot
 	 */
@@ -108,7 +123,7 @@ public class ContainerBag extends Container
 	
 	/**
 	 * Shameless copy. Thanks for setting it default visibility, Notch!
-	 * Thanks for not fixing the visibility in 1.4.7, Jeb!
+	 * Thanks for not fixing the visibility in 1.5.2, Jeb!
 	 */
 	private class SlotArmor extends Slot
 	{

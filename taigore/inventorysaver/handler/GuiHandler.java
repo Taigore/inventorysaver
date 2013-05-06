@@ -1,8 +1,10 @@
-package taigore.inventorysaver;
+package taigore.inventorysaver.handler;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import taigore.inventorysaver.client.GuiBag;
+import taigore.inventorysaver.client.gui.GuiBag;
+import taigore.inventorysaver.entity.item.EntityBag;
+import taigore.inventorysaver.inventory.ContainerBag;
 import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;

@@ -1,4 +1,4 @@
-package taigore.inventorysaver.client;
+package taigore.inventorysaver.client.entity.render;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -6,11 +6,15 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 
 import org.lwjgl.opengl.GL11;
 
-import taigore.inventorysaver.EntityBag;
+import cpw.mods.fml.client.FMLClientHandler;
+
 import taigore.inventorysaver.InventorySaver;
+import taigore.inventorysaver.client.model.ModelBag;
+import taigore.inventorysaver.entity.item.EntityBag;
 
 public class RenderBag extends Render
 {
@@ -45,7 +49,9 @@ public class RenderBag extends Render
 	
 	protected void renderName(EntityBag toRender, double renderX, double renderY, double renderZ)
     {
-        if (Minecraft.isGuiEnabled() && toRender.renderNameTicks > 0)
+	    EntityPlayer player = FMLClientHandler.instance().getClient().thePlayer;
+	    
+        if (Minecraft.isGuiEnabled() && player != null && player.isSneaking())
         {
             float var8 = 1.6F;
             float var9 = 0.016666668F * var8;

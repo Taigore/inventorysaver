@@ -1,4 +1,4 @@
-package taigore.inventorysaver.client;
+package taigore.inventorysaver.client.model;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
