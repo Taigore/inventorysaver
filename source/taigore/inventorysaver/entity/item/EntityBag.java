@@ -103,30 +103,24 @@ public class EntityBag extends Entity
 	private void setupFlags() { this.dataWatcher.addObject(dwFlags, (byte)0); }
 	
 	public boolean ignoresLava() { return this.getBagFlag(ignoreLavaPosition); }
-	public boolean onlyOwner() { return this.getBagFlag(onlyOwnerPosition); }
+	public boolean onlyOwner() { return this.getBagFlag(onlyOwnerPosition) && !this.getOwnerName().isEmpty(); }
 	
 	//////////
 	// Rules
 	//////////
 	public boolean canLoot(EntityPlayer looter)
 	{
-	    if(looter != null)
+	    MinecraftServer instance = FMLCommonHandler.instance().getMinecraftServerInstance();
+	    
+	    if(looter != null && instance != null)
         {
-    	    String ownerName = this.getOwnerName();
-    	    boolean isOp;
-    	    {
-    	        MinecraftServer instance = FMLCommonHandler.instance().getMinecraftServerInstance();
-    	        
-    	        if(instance != null)
-    	            isOp = instance.getConfigurationManager().getOps().contains(looter.username.toLowerCase());
-    	        else
-    	            isOp = false;
-    	    }
+    	    boolean isOwner = this.getOwnerName().contentEquals(looter.username);
+    	    boolean isOp = instance.getConfigurationManager().getOps().contains(looter.username.toLowerCase());
     	    
-    	    if(ownerName.isEmpty() || isOp)
+    	    if(isOp)
     	        return true;
     	    else
-    	        return !this.onlyOwner() || ownerName.contentEquals(looter.username);
+    	        return !this.onlyOwner() || isOwner;
         }
 	    else return false;
 	}
@@ -218,13 +212,16 @@ public class EntityBag extends Entity
     @Override
     public boolean interact(EntityPlayer interacting)
     {
-    	if(interacting.isSneaking())
-    	{
-    		if(!this.worldObj.isRemote && this.canLoot(interacting))
-				interacting.openGui(InventorySaver.instance, 1, this.worldObj, this.entityId, 0, 0);
-    	}
-    	else
-    		this.inventory.popNumStack(1);
+        if(this.canLoot(interacting))
+        {
+        	if(interacting.isSneaking())
+        	{
+        		if(!this.worldObj.isRemote)
+    				interacting.openGui(InventorySaver.instance, 1, this.worldObj, this.entityId, 0, 0);
+        	}
+        	else
+        		this.inventory.popNumStack(1);
+        }
     	
     	return true;
     }

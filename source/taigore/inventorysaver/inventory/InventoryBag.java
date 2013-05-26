@@ -126,8 +126,6 @@ public class InventoryBag implements IInventory
 	        }
 	        
 	        toWriteOn.setCompoundTag(inventoryTag, inventoryData);
-	        //Salva i vari oggetti.
-	        //Premurati gli slot null sovrascrivano i non null dell'inventario al caricamento.
 	    }
 	    
 	    return toWriteOn;
