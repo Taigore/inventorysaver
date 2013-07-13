@@ -7,14 +7,14 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
-
-import cpw.mods.fml.client.FMLClientHandler;
 
 import taigore.inventorysaver.InventorySaver;
 import taigore.inventorysaver.client.model.ModelBag;
 import taigore.inventorysaver.entity.item.EntityBag;
+import cpw.mods.fml.client.FMLClientHandler;
 
 public class RenderBag extends Render
 {
@@ -108,5 +108,12 @@ public class RenderBag extends Render
 	{
 		this.bagRendering((EntityBag)toRender, renderX, renderY, renderZ, renderYaw, partTick);
 	}
+
+    @Override
+    protected ResourceLocation func_110775_a(Entity entity)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

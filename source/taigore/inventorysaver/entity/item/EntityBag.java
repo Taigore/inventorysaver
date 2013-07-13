@@ -114,13 +114,17 @@ public class EntityBag extends Entity
 	    
 	    if(looter != null && instance != null)
         {
-    	    boolean isOwner = this.getOwnerName().contentEquals(looter.username);
-    	    boolean isOp = instance.getConfigurationManager().getOps().contains(looter.username.toLowerCase());
-    	    
-    	    if(isOp)
-    	        return true;
-    	    else
-    	        return !this.onlyOwner() || isOwner;
+	        if(InventorySaver.instance.onlyOwnerLoots)
+	        {
+        	    boolean isOwner = this.getOwnerName().contentEquals(looter.username);
+        	    boolean isOp = instance.getConfigurationManager().getOps().contains(looter.username.toLowerCase());
+        	    
+        	    if(isOp && InventorySaver.instance.canOpsLoot)
+        	        return true;
+        	    else
+        	        return !this.onlyOwner() || isOwner;
+	        }
+	        else return true;
         }
 	    else return false;
 	}

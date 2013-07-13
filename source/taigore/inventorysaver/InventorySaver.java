@@ -1,13 +1,17 @@
 package taigore.inventorysaver;
 
-import taigore.inventorysaver.entity.item.EntityBag;
-import taigore.inventorysaver.handler.EventHandler;
-import taigore.inventorysaver.handler.GuiHandler;
-import taigore.inventorysaver.handler.PacketHandler;
-import taigore.inventorysaver.proxy.ProxyCommon;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
+import taigore.inventorysaver.entity.item.EntityBag;
+import taigore.inventorysaver.handler.EventHandler;
+import taigore.inventorysaver.handler.GuiHandler;
+import taigore.inventorysaver.handler.TickHandler;
+import taigore.inventorysaver.item.ItemGemShard;
+import taigore.inventorysaver.network.PacketHandler;
+import taigore.inventorysaver.network.packet.Packet250BagInventory;
+import taigore.inventorysaver.network.packet.Packet250ShardUpdate;
+import taigore.inventorysaver.proxy.ProxyCommon;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -16,6 +20,8 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
+import cpw.mods.fml.common.registry.TickRegistry;
+import cpw.mods.fml.relauncher.Side;
 
 @Mod
 (
@@ -29,7 +35,7 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 	clientPacketHandlerSpec=@SidedPacketHandler
 	(
 		packetHandler=PacketHandler.class,
-		channels={PacketHandler.chanInventorySync}
+		channels={Packet250ShardUpdate.channel, Packet250BagInventory.channel}
 	)
 )
 public class InventorySaver
@@ -48,11 +54,12 @@ public class InventorySaver
 	
 	//System properties
 	public boolean onlyOwnerLoots;     //If a bag can only be emptied by its owner
+	public boolean canOpsLoot;         //If OPs can access a bag's contents regardless of settings
 	
 	//Bag properties
 	public boolean bagIgnoresLava;     //If the bag gets destroyed by lava
 	
-	@Mod.PreInit
+	@Mod.EventHandler
 	public void configSetup(FMLPreInitializationEvent event)
 	{
 	    this.configFile = new Configuration(event.getSuggestedConfigurationFile());
@@ -64,6 +71,12 @@ public class InventorySaver
 	        this.onlyOwnerLoots = onlyOwnerLoots.getBoolean(false);
 	        onlyOwnerLoots.comment = "Protects the bag from damage and fixes its position to prevent griefing.";
 	        onlyOwnerLoots.comment+= "\nOnly the owner can make it drop items and open the interface.";
+	    }
+	    {
+	        Property canOpsLoot = this.configFile.get("General", "OPs override", true);
+	        this.canOpsLoot = canOpsLoot.getBoolean(true);
+	        
+	        canOpsLoot.comment = "If true, OPs can access any bag, even if 'Protect bag' is true.";
 	    }
 	    
 	    //Bag properties;
@@ -78,14 +91,22 @@ public class InventorySaver
 	    this.configFile.save();
 	}
 	
-	@Mod.Init
+	//////////
+	// Items
+	//////////
+	public ItemGemShard resonantShard;
+	
+	@Mod.EventHandler
 	public void initialization(FMLInitializationEvent event)
 	{
 		EntityRegistry.registerModEntity(EntityBag.class, "entity.bag", 1, instance, 160, Integer.MAX_VALUE, false);
 		
 		proxy.registerRenderers();
 		
+		this.resonantShard = new ItemGemShard(1000);
+		
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
 		NetworkRegistry.instance().registerGuiHandler(this, new GuiHandler());
+		TickRegistry.registerTickHandler(new TickHandler(), Side.SERVER);
 	}
 }

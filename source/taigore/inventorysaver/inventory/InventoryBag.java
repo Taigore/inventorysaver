@@ -1,15 +1,13 @@
 package taigore.inventorysaver.inventory;
 
 import java.util.Collection;
-import java.util.Iterator;
-
-import taigore.inventorysaver.entity.item.EntityBag;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import taigore.inventorysaver.entity.item.EntityBag;
 import cpw.mods.fml.common.FMLLog;
 
 ///////////////
@@ -105,6 +103,7 @@ public class InventoryBag implements IInventory
 	// Save/Load
 	//////////////
 	public static final String inventoryTag = "Inventory";
+	public static final String shardMapTag = "shardMap";
 	
 	public NBTTagCompound writeToNBT(NBTTagCompound toWriteOn)
     {
@@ -152,33 +151,27 @@ public class InventoryBag implements IInventory
     ////////////
     // Utility
     ////////////
+    
     /**
      * Adds all ItemStacks to empty slots in this inventory.
      * Returns true if it placed all stacks in the collection.
      */
     public boolean addItemCollection(Collection<ItemStack> itemCollection)
     {
-        if(itemCollection != null && !itemCollection.isEmpty())
+        int slot = 0;
+        
+        for(ItemStack toAdd : itemCollection)
         {
-            int i = 0;
-            Iterator<ItemStack> itemIterator = itemCollection.iterator();
-            
-            while(itemIterator.hasNext() && i < this.getSizeInventory())
+            if(toAdd != null)
             {
-                ItemStack toAdd = itemIterator.next();
+                while(this.getStackInSlot(slot) != null)
+                    slot += 1;
                 
-                if(toAdd != null)
-                {
-                    for(; i < this.getSizeInventory() && this.getStackInSlot(i) != null; ++i);
-                    
-                    if(i < this.getSizeInventory())
-                        this.setInventorySlotContents(i, toAdd);
-                }
-                
-                itemIterator.remove();
+                if(slot < this.getSizeInventory())
+                    this.setInventorySlotContents(slot, toAdd);
+                else
+                    return false;
             }
-            
-            return !itemIterator.hasNext();
         }
         
         return true;
