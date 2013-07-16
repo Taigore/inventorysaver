@@ -97,7 +97,7 @@ public class InventoryBag implements IInventory
 	@Override
 	public boolean isInvNameLocalized() { return false; }
 	@Override
-	public boolean isStackValidForSlot(int i, ItemStack itemstack) { return false; }
+    public boolean isItemValidForSlot(int i, ItemStack itemstack) { return false; }
 	
 	//////////////
 	// Save/Load

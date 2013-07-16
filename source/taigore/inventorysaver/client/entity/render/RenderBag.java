@@ -18,7 +18,8 @@ import cpw.mods.fml.client.FMLClientHandler;
 
 public class RenderBag extends Render
 {
-	ModelBase bagModel;
+	private ModelBase bagModel;
+	private static final ResourceLocation bagTexture = new ResourceLocation(InventorySaver.modId.toLowerCase(), "textures/entity/bag.png");
 	
 	public RenderBag()
 	{
@@ -33,7 +34,7 @@ public class RenderBag extends Render
 			GL11.glPushMatrix();
 			GL11.glTranslatef((float)renderX, (float)renderY, (float)renderZ);
 			GL11.glRotatef(180.0F - renderYaw, 0.0F, 1.0F, 0.0F);
-			this.loadTexture(InventorySaver.proxy.BAG_TEXTURE);
+			this.func_110776_a(bagTexture);
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 			GL11.glScalef(-1.0f, -1.0f, 1.0F);
 			this.bagModel.render(toRender, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f / 16f);

@@ -54,7 +54,7 @@ public class Packet250BagInventory extends Packet250CustomPayload
 			}
 			catch(Exception e)
             {
-                FMLLog.info("Taigore InventorySaver: exception while writing packet %s", Packet250ShardUpdate.class.getName());
+                FMLLog.info("Taigore InventorySaver: exception while writing packet %s", Packet250DeathUpdate.class.getName());
                 e.printStackTrace();
                 returnValue = null;
             }
@@ -104,7 +104,7 @@ public class Packet250BagInventory extends Packet250CustomPayload
 		}
 		else
 		if(bagWorld != null && inventoryPacket != null)
-            FMLLog.info("Taigore InventorySaver: invalid packet with channel %s handled by %s class.\n%s", inventoryPacket.channel, Packet250ShardUpdate.class.toString(), String.valueOf(inventoryPacket));
+            FMLLog.info("Taigore InventorySaver: invalid packet with channel %s handled by %s class.\n%s", inventoryPacket.channel, Packet250DeathUpdate.class.toString(), String.valueOf(inventoryPacket));
 	}
 	
 	public static boolean isPacketThisType(Packet250CustomPayload toCheck)

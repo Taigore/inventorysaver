@@ -4,22 +4,24 @@ import java.util.ArrayList;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
-import taigore.inventorysaver.InventorySaver;
+import net.minecraftforge.event.world.WorldEvent;
 import taigore.inventorysaver.entity.item.EntityBag;
-import taigore.inventorysaver.item.ItemGemShard;
-import taigore.inventorysaver.world.ShardPositions;
+import taigore.inventorysaver.network.packet.Packet250DeathUpdate;
+import taigore.inventorysaver.world.DeathPositions;
+import cpw.mods.fml.common.network.PacketDispatcher;
+import cpw.mods.fml.common.network.Player;
 
 public class EventHandler
 {
 	@ForgeSubscribe
-	public void dropInventoryBag(PlayerDropsEvent deathEvent)
+	public void dropInventoryBag(PlayerDropsEvent dropEvent)
 	{
-    	EntityPlayer droppingPlayer = deathEvent.entityPlayer;
-    	ArrayList<EntityItem> drops = deathEvent.drops;
+    	EntityPlayer droppingPlayer = dropEvent.entityPlayer;
+    	ArrayList<EntityItem> drops = dropEvent.drops;
     	World currentWorld = droppingPlayer.worldObj;
     		
     	if (!currentWorld.isRemote)
@@ -30,19 +32,22 @@ public class EventHandler
     			
     		currentWorld.spawnEntityInWorld(dropsBag);
     		
-    		ShardPositions savedShards = ShardPositions.getShardPositions(currentWorld);
-    		ItemGemShard itemType = InventorySaver.instance.resonantShard;
+    		DeathPositions savedShards = DeathPositions.getDeathPositions(currentWorld);
     		
-    		for(EntityItem dropped : drops)
-    		{
-    		    ItemStack item = dropped != null ? dropped.getEntityItem() : null;
-    		    
-    		    if(item != null && item.getItem() == itemType)
-    		        savedShards.changeShardStrength(dropsBag, item.stackSize, itemType.isEmerald(item));
-    		}
+    		savedShards.addNewDeathPointForPlayer(droppingPlayer);
+    		
+    		Packet250CustomPayload toSend = Packet250DeathUpdate.makeForAllTracked(savedShards);
+    		PacketDispatcher.sendPacketToPlayer(toSend, (Player)droppingPlayer);
         }
     		
     	//Prevents the standard drop
-    	deathEvent.setCanceled(true);
+    	dropEvent.setCanceled(true);
+	}
+	
+	@ForgeSubscribe
+	public void loadDeathData(WorldEvent.Load event)
+	{
+	    if(!event.world.isRemote)
+	        DeathPositions.getDeathPositions(event.world);
 	}
 }

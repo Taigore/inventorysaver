@@ -4,6 +4,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
+import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
@@ -13,6 +14,8 @@ import taigore.inventorysaver.inventory.ContainerBag;
 
 public class GuiBag extends GuiContainer
 {
+    public static final ResourceLocation guiBackground = new ResourceLocation(InventorySaver.modId.toLowerCase(), "textures/gui/BagGui.png");
+    
 	public GuiBag(InventoryPlayer playerInventory, EntityBag openedBag)
 	{
 	    super(new ContainerBag(playerInventory, openedBag));
@@ -27,7 +30,7 @@ public class GuiBag extends GuiContainer
 	protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3)
 	{
 		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-		this.mc.renderEngine.bindTexture(InventorySaver.proxy.BAGGUI_TEXTURE);
+		this.mc.func_110434_K().func_110577_a(guiBackground);
 		this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, xSize, ySize);
 	}
 	

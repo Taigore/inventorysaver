@@ -7,10 +7,10 @@ import taigore.inventorysaver.entity.item.EntityBag;
 import taigore.inventorysaver.handler.EventHandler;
 import taigore.inventorysaver.handler.GuiHandler;
 import taigore.inventorysaver.handler.TickHandler;
-import taigore.inventorysaver.item.ItemGemShard;
+import taigore.inventorysaver.item.ItemDeathCompass;
 import taigore.inventorysaver.network.PacketHandler;
 import taigore.inventorysaver.network.packet.Packet250BagInventory;
-import taigore.inventorysaver.network.packet.Packet250ShardUpdate;
+import taigore.inventorysaver.network.packet.Packet250DeathUpdate;
 import taigore.inventorysaver.proxy.ProxyCommon;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
@@ -25,7 +25,7 @@ import cpw.mods.fml.relauncher.Side;
 
 @Mod
 (
-	modid="Taigore_InventorySaver",
+	modid=InventorySaver.modId,
 	useMetadata=true
 )
 @NetworkMod
@@ -35,11 +35,14 @@ import cpw.mods.fml.relauncher.Side;
 	clientPacketHandlerSpec=@SidedPacketHandler
 	(
 		packetHandler=PacketHandler.class,
-		channels={Packet250ShardUpdate.channel, Packet250BagInventory.channel}
+		channels={Packet250DeathUpdate.channel, Packet250BagInventory.channel}
 	)
 )
 public class InventorySaver
 {
+    public static final String modId = "Taigore_InventorySaver";
+    
+    public static String getResourceId(String resourcePath) { return String.format("%s:%s", modId.toLowerCase(), resourcePath); }
     
 	@Mod.Instance("Taigore_InventorySaver")
 	public static InventorySaver instance;
@@ -94,16 +97,15 @@ public class InventorySaver
 	//////////
 	// Items
 	//////////
-	public ItemGemShard resonantShard;
+	public ItemDeathCompass deathCompass;
 	
 	@Mod.EventHandler
 	public void initialization(FMLInitializationEvent event)
 	{
 		EntityRegistry.registerModEntity(EntityBag.class, "entity.bag", 1, instance, 160, Integer.MAX_VALUE, false);
-		
 		proxy.registerRenderers();
 		
-		this.resonantShard = new ItemGemShard(1000);
+		this.deathCompass = new ItemDeathCompass(1000);
 		
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
 		NetworkRegistry.instance().registerGuiHandler(this, new GuiHandler());

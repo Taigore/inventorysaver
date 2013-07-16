@@ -149,7 +149,7 @@ public class EntityBag extends Entity
      * If only the owner can loot, lava damage is disabled to prevent griefing.
      */
 	@Override
-	public boolean attackEntityFrom(DamageSource damageType, int damageAmount)
+	public boolean attackEntityFrom(DamageSource damageType, float damageAmount)
     {
         if(damageType == DamageSource.outOfWorld)
         {
@@ -214,7 +214,7 @@ public class EntityBag extends Entity
      *	opens the GUI if sneak clicked.
      */
     @Override
-    public boolean interact(EntityPlayer interacting)
+    public boolean func_130002_c(EntityPlayer interacting)
     {
         if(this.canLoot(interacting))
         {

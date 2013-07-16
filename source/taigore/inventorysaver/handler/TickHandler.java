@@ -4,55 +4,62 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
-import taigore.inventorysaver.network.packet.Packet250ShardUpdate;
-import taigore.inventorysaver.world.ShardPositions;
-import taigore.inventorysaver.world.ShardPositions.Tracked;
+import net.minecraft.world.WorldServer;
+import taigore.inventorysaver.network.packet.Packet250DeathUpdate;
+import taigore.inventorysaver.world.DeathPositions;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
+import cpw.mods.fml.common.network.PacketDispatcher;
+import cpw.mods.fml.common.network.Player;
+import cpw.mods.fml.server.FMLServerHandler;
 
 public class TickHandler implements ITickHandler
 {
-    private Set<EntityPlayerMP> alreadyUpdatedPlayers = new HashSet();
+    private Set<Object> updatedPlayers = new HashSet();
     
     @Override
     public void tickStart(EnumSet<TickType> type, Object... tickData)
     {
-        World updated = (World)tickData[0];
-        
-        if(!updated.isRemote)
+        if(type.contains(TickType.PLAYER))
         {
-            ShardPositions toSync = ShardPositions.getShardPositions(updated);
+            World updated = ((EntityPlayer)tickData[0]).worldObj;
             
-            for(int i = 0; i < 2; ++i)
+            if(!updated.isRemote)
             {
-                boolean isEmerald = i == 0;
-                Set<Tracked> toUpdate = isEmerald ? toSync.emeraldShards : toSync.diamondShards;
-                
-                for(Tracked updating : toUpdate)
-                    updating.updatePosition();
+                if(!updatedPlayers.contains(tickData[0]))
+                {
+                    DeathPositions toSync = DeathPositions.getDeathPositions(updated);
+                    Packet250CustomPayload toSend = Packet250DeathUpdate.makeForAllTracked(toSync);
+                    
+                    PacketDispatcher.sendPacketToPlayer(toSend, (Player)tickData[0]);
+                    
+                    this.updatedPlayers.add(tickData[0]);
+                }
             }
+        }
+        if(type.contains(TickType.SERVER))
+        {
+            MinecraftServer server = FMLServerHandler.instance().getServer();
             
-            Set<EntityPlayerMP> newPlayers = new HashSet(updated.playerEntities);
-            newPlayers.removeAll(this.alreadyUpdatedPlayers);
-            
-            if(!newPlayers.isEmpty())
+            if(server != null)
             {
-                Packet250CustomPayload toSend = Packet250ShardUpdate.makeForAllTracked(toSync);
+                WorldServer[] worlds = server.worldServers;
+                Set<Object> allPlayers = new HashSet();
                 
-                for(EntityPlayerMP player : newPlayers)
-                    player.playerNetServerHandler.sendPacketToPlayer(toSend);
+                for(WorldServer world : worlds)
+                    allPlayers.addAll(world.playerEntities);
                 
-                this.alreadyUpdatedPlayers.clear();
-                this.alreadyUpdatedPlayers.addAll(updated.playerEntities);
+                this.updatedPlayers.retainAll(allPlayers);
             }
         }
     }
     
     @Override
-    public EnumSet<TickType> ticks() { return EnumSet.of(TickType.WORLD); }
+    public EnumSet<TickType> ticks() { return EnumSet.of(TickType.PLAYER, TickType.SERVER); }
     @Override
     public void tickEnd(EnumSet<TickType> type, Object... tickData) {}
     @Override
