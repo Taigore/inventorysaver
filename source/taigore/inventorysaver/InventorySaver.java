@@ -20,6 +20,7 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
+import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 
@@ -91,13 +92,25 @@ public class InventorySaver
     	    bagIgnoresLava.comment+= "\nOverwritten by \"Protect bag\" if true.";
 	    }
 	    
+	    //Items
+	    {
+	        Property deathCompassId = this.configFile.getItem("compass.death", 1000);
+	        deathCompassId.comment = "Death compass item id. Set to 0 or less to prevent it from being in game.\nPoints to the last point where the player holding it died.";
+	        
+	        if(deathCompassId.getInt() > 0)
+	        {
+    	        this.deathCompass = new ItemDeathCompass(deathCompassId.getInt());
+    	        LanguageRegistry.addName(deathCompass, "Death compass");
+	        }
+	    }
+	    
 	    this.configFile.save();
 	}
 	
 	//////////
 	// Items
 	//////////
-	public ItemDeathCompass deathCompass;
+	public ItemDeathCompass deathCompass = null;
 	
 	@Mod.EventHandler
 	public void initialization(FMLInitializationEvent event)
@@ -105,10 +118,10 @@ public class InventorySaver
 		EntityRegistry.registerModEntity(EntityBag.class, "entity.bag", 1, instance, 160, Integer.MAX_VALUE, false);
 		proxy.registerRenderers();
 		
-		this.deathCompass = new ItemDeathCompass(1000);
-		
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
 		NetworkRegistry.instance().registerGuiHandler(this, new GuiHandler());
-		TickRegistry.registerTickHandler(new TickHandler(), Side.SERVER);
+		
+		if(this.deathCompass != null)
+		    TickRegistry.registerTickHandler(new TickHandler(), Side.SERVER);
 	}
 }

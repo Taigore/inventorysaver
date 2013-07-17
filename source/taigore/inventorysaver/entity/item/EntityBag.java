@@ -3,9 +3,6 @@ package taigore.inventorysaver.entity.item;
 import java.util.LinkedList;
 import java.util.List;
 
-import taigore.inventorysaver.InventorySaver;
-import taigore.inventorysaver.inventory.InventoryBag;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,6 +11,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+import taigore.inventorysaver.InventorySaver;
+import taigore.inventorysaver.inventory.InventoryBag;
 import cpw.mods.fml.common.FMLCommonHandler;
 
 public class EntityBag extends Entity

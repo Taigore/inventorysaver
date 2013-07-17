@@ -23,13 +23,13 @@ public class EventHandler
     	EntityPlayer droppingPlayer = dropEvent.entityPlayer;
     	ArrayList<EntityItem> drops = dropEvent.drops;
     	World currentWorld = droppingPlayer.worldObj;
-    		
+    	
+    	EntityBag dropsBag = new EntityBag(currentWorld, drops, droppingPlayer.username);
+        dropsBag.setPosition(droppingPlayer.posX, droppingPlayer.posY + 1.0d, droppingPlayer.posZ);
+        dropsBag.rotationYaw = droppingPlayer.rotationYaw;
+    	
     	if (!currentWorld.isRemote)
         {
-    		EntityBag dropsBag = new EntityBag(currentWorld, drops, droppingPlayer.username);
-    		dropsBag.setPosition(droppingPlayer.posX, droppingPlayer.posY + 1.0d, droppingPlayer.posZ);
-    		dropsBag.rotationYaw = droppingPlayer.rotationYaw;
-    			
     		currentWorld.spawnEntityInWorld(dropsBag);
     		
     		DeathPositions savedShards = DeathPositions.getDeathPositions(currentWorld);
