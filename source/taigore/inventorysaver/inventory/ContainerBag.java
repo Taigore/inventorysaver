@@ -10,18 +10,18 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
-import taigore.inventorysaver.entity.item.EntityBag;
+import taigore.inventorysaver.tileentity.TileEntityBag;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class ContainerBag extends Container
 {
-	public final InventoryBag bagInventory;
+	public final TileEntityBag bagInventory;
 	public final InventoryPlayer playerInventory;
 	
-	public ContainerBag(InventoryPlayer playerInventory, EntityBag openedBag)
+	public ContainerBag(InventoryPlayer playerInventory, TileEntityBag openedBag)
     {
-        this.bagInventory = openedBag.inventory;
+        this.bagInventory = openedBag;
         this.playerInventory = playerInventory;
         
         int startingX = 31;
@@ -71,7 +71,7 @@ public class ContainerBag extends Container
 	//////////////
 	public ItemStack transferStackInSlot(EntityPlayer playerClicker, int clickedSlotID)
     {
-		//The bag is take only, so I don't bother to handle shift click from the
+		//The bag is take only, so I don't handle shift click from the
 		//player's inventory.
 		if(clickedSlotID < bagInventory.getSizeInventory())
 		{
@@ -80,32 +80,34 @@ public class ContainerBag extends Container
 			//couldn't get fully merged. If the stack was fully merged
 			//or not a single item has been moved, it stops the recalling.
 			Slot bagSlot = this.getSlot(clickedSlotID);
+			int armorSlot = bagSlot.getSlotIndex() - 36;
 			ItemStack stackToMerge = bagSlot.getStack();
 			
 			if(stackToMerge != null)
 			{
+			    if(armorSlot > 0)
+			    {
+			        playerClicker.inventory.armorInventory[3 - armorSlot] = stackToMerge;
+			        bagSlot.putStack(null);
+			    }
+			    else
 				//Merges from the last slot to the first slot of the player's inventory.
 				//+4 is to exclude the four armor slots, which are actually included in this.playerInventory.getSizeInventory()
-				if(!this.mergeItemStack(stackToMerge, this.inventorySlots.size() - this.playerInventory.getSizeInventory() + 4, this.inventorySlots.size(), true))
-					return null;
-				else
+				if(this.mergeItemStack(stackToMerge, this.inventorySlots.size() - this.playerInventory.getSizeInventory() + 4, this.inventorySlots.size(), true))
 				{
 					if(stackToMerge.stackSize == 0)
-					{
 						bagSlot.putStack(null);
-						return null;
-					}
 					else
 						return stackToMerge;
 				}
 			}
-			else return null;
 		}
-		else return null;
+
+		return null;
     }
 	
 	@Override
-	public boolean canInteractWith(EntityPlayer interactor) { return !this.bagInventory.getEntity().isDead; }
+	public boolean canInteractWith(EntityPlayer interactor) { return this.bagInventory.isUseableByPlayer(interactor); }
 	
 	///////////////
 	// Subclasses
@@ -115,7 +117,7 @@ public class ContainerBag extends Container
 	 */
 	private class SlotBag extends Slot
 	{
-		public SlotBag(EntityBag managedBag, int slotIndex, int slotX, int slotY) { super(managedBag.inventory, slotIndex, slotX, slotY); }
+		public SlotBag(TileEntityBag managedBag, int slotIndex, int slotX, int slotY) { super(managedBag, slotIndex, slotX, slotY); }
 		
 		@Override
 		public boolean isItemValid(ItemStack toCheck) { return false; }

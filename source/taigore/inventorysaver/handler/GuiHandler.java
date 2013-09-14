@@ -3,23 +3,18 @@ package taigore.inventorysaver.handler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import taigore.inventorysaver.client.gui.GuiBag;
-import taigore.inventorysaver.entity.item.EntityBag;
 import taigore.inventorysaver.inventory.ContainerBag;
-import taigore.inventorysaver.network.packet.Packet250BagInventory;
+import taigore.inventorysaver.tileentity.TileEntityBag;
 import cpw.mods.fml.common.network.IGuiHandler;
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
 
 public class GuiHandler implements IGuiHandler
 {
 	@Override
-	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int entityId, int dummy, int dummier)
+	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int arg1, int arg2, int arg3)
 	{
-		if(ID == 1)
+		if(ID == 1) //Arg1 = x, arg2 = y, arg3 = z
 		{
-			EntityBag clickedBag = (EntityBag)world.getEntityByID(entityId);
-			
-			PacketDispatcher.sendPacketToPlayer(Packet250BagInventory.makeInventorySyncPacket(clickedBag), (Player)player);
+			TileEntityBag clickedBag = (TileEntityBag)world.getBlockTileEntity(arg1, arg2, arg3);
 			
 			return new ContainerBag(player.inventory, clickedBag);
 		}
@@ -27,11 +22,11 @@ public class GuiHandler implements IGuiHandler
 	}
 
 	@Override
-	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int entityId, int dummy, int dummier)
+	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int arg1, int arg2, int arg3)
 	{
 		if(ID == 1)
 		{
-			EntityBag clickedBag = (EntityBag)world.getEntityByID(entityId);
+		    TileEntityBag clickedBag = (TileEntityBag)world.getBlockTileEntity(arg1, arg2, arg3);
 			
 			return new GuiBag(player.inventory, clickedBag);
 		}

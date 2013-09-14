@@ -1,5 +1,6 @@
 package taigore.inventorysaver.client.gui;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -9,14 +10,14 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import taigore.inventorysaver.InventorySaver;
-import taigore.inventorysaver.entity.item.EntityBag;
 import taigore.inventorysaver.inventory.ContainerBag;
+import taigore.inventorysaver.tileentity.TileEntityBag;
 
 public class GuiBag extends GuiContainer
 {
-    public static final ResourceLocation guiBackground = new ResourceLocation(InventorySaver.modId.toLowerCase(), "textures/gui/BagGui.png");
+    public static final ResourceLocation guiBackground = new ResourceLocation(InventorySaver.modID.toLowerCase(), "textures/gui/BagGui.png");
     
-	public GuiBag(InventoryPlayer playerInventory, EntityBag openedBag)
+	public GuiBag(InventoryPlayer playerInventory, TileEntityBag openedBag)
 	{
 	    super(new ContainerBag(playerInventory, openedBag));
 	    this.xSize = 182;
@@ -32,6 +33,9 @@ public class GuiBag extends GuiContainer
 		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		this.mc.func_110434_K().func_110577_a(guiBackground);
 		this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, xSize, ySize);
+		
+		String playerName = ((ContainerBag)this.inventorySlots).bagInventory.ownerName;
+		Minecraft.getMinecraft().fontRenderer.drawString(playerName, this.guiLeft + 4, this.guiTop - 8, -1);
 	}
 	
 	@Override
@@ -53,7 +57,14 @@ public class GuiBag extends GuiContainer
         {
             ContainerBag container = (ContainerBag)this.inventorySlots;
             
-            for(int i = 0; i < container.bagInventory.getSizeInventory(); ++i)
+            for(int i = 8; i >= 0; --i)
+            {
+                Slot clicked = container.getSlotFromInventory(container.bagInventory, i);
+                
+                this.handleMouseClick(clicked, clicked.slotNumber, 0, 1);
+            }
+            
+            for(int i = 9; i < container.bagInventory.getSizeInventory(); ++i)
             {
                 Slot clicked = container.getSlotFromInventory(container.bagInventory, i);
                 

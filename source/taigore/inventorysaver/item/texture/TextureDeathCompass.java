@@ -1,4 +1,4 @@
-package taigore.inventorysaver.client.renderer.texture;
+package taigore.inventorysaver.item.texture;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureCompass;
@@ -24,7 +24,7 @@ public class TextureDeathCompass extends TextureCompass
             if (compassWorld != null && !skipCalculations)
             {
                 DeathPositions positions = DeathPositions.getDeathPositions(compassWorld);
-                Vec3 deathPosition = positions.getLastDeathPointForPlayer(thePlayer);
+                Vec3 deathPosition = positions.peekDeathPoint(thePlayer);
                 
                 if(deathPosition != null)
                 {

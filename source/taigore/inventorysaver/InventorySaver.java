@@ -1,15 +1,13 @@
 package taigore.inventorysaver;
 
+import java.util.logging.Logger;
+
 import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Property;
-import taigore.inventorysaver.entity.item.EntityBag;
-import taigore.inventorysaver.handler.EventHandler;
-import taigore.inventorysaver.handler.GuiHandler;
-import taigore.inventorysaver.handler.TickHandler;
+import taigore.inventorysaver.block.BlockBag;
+import taigore.inventorysaver.common.ModSettings;
+import taigore.inventorysaver.common.ModSettings.DebugLevel;
 import taigore.inventorysaver.item.ItemDeathCompass;
 import taigore.inventorysaver.network.PacketHandler;
-import taigore.inventorysaver.network.packet.Packet250BagInventory;
 import taigore.inventorysaver.network.packet.Packet250DeathUpdate;
 import taigore.inventorysaver.proxy.ProxyCommon;
 import cpw.mods.fml.common.Mod;
@@ -18,16 +16,11 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.EntityRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
-import cpw.mods.fml.common.registry.TickRegistry;
-import cpw.mods.fml.relauncher.Side;
 
 @Mod
 (
-	modid=InventorySaver.modId,
-	useMetadata=true
+    modid=InventorySaver.modID,
+    useMetadata=true    
 )
 @NetworkMod
 (
@@ -36,92 +29,66 @@ import cpw.mods.fml.relauncher.Side;
 	clientPacketHandlerSpec=@SidedPacketHandler
 	(
 		packetHandler=PacketHandler.class,
-		channels={Packet250DeathUpdate.channel, Packet250BagInventory.channel}
+		channels={Packet250DeathUpdate.channel}
 	)
 )
 public class InventorySaver
 {
-    public static final String modId = "Taigore_InventorySaver";
+    static public final String modID = "Taigore_InventorySaver";
     
-    public static String getResourceId(String resourcePath) { return String.format("%s:%s", modId.toLowerCase(), resourcePath); }
+    public static String resource(String resourcePath) { return String.format("%s:%s", modID.toLowerCase(), resourcePath); }
     
-	@Mod.Instance("Taigore_InventorySaver")
+    @Mod.Instance(InventorySaver.modID)
 	public static InventorySaver instance;
 	
-	@SidedProxy(clientSide="taigore.inventorysaver.proxy.ProxyClient", serverSide="taigore.inventorysaver.proxy.ProxyCommon")
+	@SidedProxy(serverSide="taigore.inventorysaver.proxy.ProxyCommon", clientSide="taigore.inventorysaver.proxy.ProxyClient")
 	public static ProxyCommon proxy;
+	
+	public static Logger log = Logger.getLogger(modID);
 	
 	/////////////////
 	// Mod settings
 	/////////////////
-	public Configuration configFile;
-	
-	//System properties
-	public boolean onlyOwnerLoots;     //If a bag can only be emptied by its owner
-	public boolean canOpsLoot;         //If OPs can access a bag's contents regardless of settings
-	
-	//Bag properties
-	public boolean bagIgnoresLava;     //If the bag gets destroyed by lava
+	public ModSettings settings = null;
 	
 	@Mod.EventHandler
 	public void configSetup(FMLPreInitializationEvent event)
 	{
-	    this.configFile = new Configuration(event.getSuggestedConfigurationFile());
-	    this.configFile.load();
+	    InventorySaver.log.info("Reading config file");
 	    
-	    //System properties
-	    {
-	        Property onlyOwnerLoots = this.configFile.get("General", "Protect bag", false);
-	        this.onlyOwnerLoots = onlyOwnerLoots.getBoolean(false);
-	        onlyOwnerLoots.comment = "Protects the bag from damage and fixes its position to prevent griefing.";
-	        onlyOwnerLoots.comment+= "\nOnly the owner can make it drop items and open the interface.";
-	    }
-	    {
-	        Property canOpsLoot = this.configFile.get("General", "OPs override", true);
-	        this.canOpsLoot = canOpsLoot.getBoolean(true);
-	        
-	        canOpsLoot.comment = "If true, OPs can access any bag, even if 'Protect bag' is true.";
-	    }
+	    this.settings = new ModSettings(new Configuration(event.getSuggestedConfigurationFile()), DebugLevel.MODSETTINGS);
 	    
-	    //Bag properties;
-	    {
-    	    Property bagIgnoresLava = this.configFile.get("Bag properties", "Ignore lava", false);
-    	    this.bagIgnoresLava = bagIgnoresLava.getBoolean(false) || this.onlyOwnerLoots;
-    	    bagIgnoresLava.comment = "If the bag can fall in lava without getting damaged.";
-    	    bagIgnoresLava.comment+= "\nIt will be submerged though, so retrieving it may be difficult.";
-    	    bagIgnoresLava.comment+= "\nOverwritten by \"Protect bag\" if true.";
-	    }
+	    this.settings.init("Item:DeathCompass", null, 4000);
+        this.settings.alias("Item:DeathCompass", "DeathCompassID");
+        
+        this.settings.init("Block:Bag", null, 300);
+        this.settings.alias("Block:Bag", "BagBlockID");
 	    
-	    //Items
-	    {
-	        Property deathCompassId = this.configFile.getItem("compass.death", 1000);
-	        deathCompassId.comment = "Death compass item id. Set to 0 or less to prevent it from being in game.\nPoints to the last point where the player holding it died.";
-	        
-	        if(deathCompassId.getInt() > 0)
-	        {
-    	        this.deathCompass = new ItemDeathCompass(deathCompassId.getInt());
-    	        LanguageRegistry.addName(deathCompass, "Death compass");
-	        }
-	    }
+	    this.settings.init("Bag:ProtectLoot", "Prevents the bag from interacting with someone that's not the owner", false);
+	    this.settings.alias("Bag:ProtectLoot", "ProtectLoot");
 	    
-	    this.configFile.save();
+	    this.settings.init("Bag:Gravity", "If gravity affects the bag. If ProtectLoot is true, this is overridden as false", true);
+	    this.settings.alias("Bag:Gravity", "BagGravity");
+	    
+	    this.settings.init("Bag:IgnoreLava", "If true, the bag is unaffected by lava. If ProtectLoot is true, this is overridden as true", false);
+	    this.settings.alias("Bag:IgnoreLava", "IgnoreLava");
+	    
+	    this.settings.save();
 	}
 	
-	//////////
-	// Items
-	//////////
-	public ItemDeathCompass deathCompass = null;
+	///////////////////
+	// Items & Blocks
+	///////////////////
+	public BlockBag blockBag = null;
+	
+    public ItemDeathCompass itemDeathCompass = null;
 	
 	@Mod.EventHandler
 	public void initialization(FMLInitializationEvent event)
 	{
-		EntityRegistry.registerModEntity(EntityBag.class, "entity.bag", 1, instance, 160, Integer.MAX_VALUE, false);
-		proxy.registerRenderers();
-		
-		MinecraftForge.EVENT_BUS.register(new EventHandler());
-		NetworkRegistry.instance().registerGuiHandler(this, new GuiHandler());
-		
-		if(this.deathCompass != null)
-		    TickRegistry.registerTickHandler(new TickHandler(), Side.SERVER);
+	    proxy.registerItems();
+		proxy.registerBlocks();
+		proxy.registerEntities();
+		proxy.registerHandlers();
 	}
 }

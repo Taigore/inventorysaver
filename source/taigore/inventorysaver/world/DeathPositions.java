@@ -11,6 +11,8 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 
+import com.google.common.base.Strings;
+
 public class DeathPositions extends WorldSavedData
 {
     public static final String deathPositionsName = "Taigore_InventorySaver_DeathPositions";
@@ -21,62 +23,25 @@ public class DeathPositions extends WorldSavedData
     
     public static DeathPositions getDeathPositions(World world)
     {
-        WorldSavedData returnValue = null;
+        DeathPositions returnValue = null;
         
         if(world != null)
         {
-            returnValue = world.loadItemData(DeathPositions.class, deathPositionsName);
-        
+            returnValue = (DeathPositions) world.loadItemData(DeathPositions.class, deathPositionsName);
+                
             if(returnValue == null || !DeathPositions.class.isInstance(returnValue))
             {
-                returnValue = world.loadItemData(DeathPositions.class, deathPositionsName);
-                
-                if(returnValue == null || !DeathPositions.class.isInstance(returnValue))
-                {
-                    returnValue = new DeathPositions(deathPositionsName);
-                    world.setItemData(deathPositionsName, returnValue);
-                }
-            }
-        }
-        
-        return (DeathPositions)returnValue;
-    }
-    
-    public Stack<Vec3> getDeathPointsForPlayer(EntityPlayer player)
-    {
-        if(player != null)
-            return this.getDeathPointsForPlayer(player.username);
-        else
-            return null;
-    }
-    public Stack<Vec3> getDeathPointsForPlayer(String username)
-    {
-        Stack<Vec3> returnValue = null;
-        
-        if(username != null && !username.isEmpty())
-        {
-            returnValue = this.deathPoints.get(username);
-            
-            if(returnValue == null)
-            {
-                returnValue = new Stack();
-                this.deathPoints.put(username, returnValue);
+                returnValue = new DeathPositions(deathPositionsName);
+                world.setItemData(deathPositionsName, returnValue);
             }
         }
         
         return returnValue;
     }
     
-    public Vec3 getLastDeathPointForPlayer(EntityPlayer player)
+    public Vec3 peekDeathPoint(String username)
     {
-        if(player != null)
-            return this.getLastDeathPointForPlayer(player.username);
-        else
-            return null;
-    }
-    public Vec3 getLastDeathPointForPlayer(String username)
-    {
-        Stack<Vec3> playerDeaths = this.getDeathPointsForPlayer(username);
+        Stack<Vec3> playerDeaths = this.deathPoints.get(username);
         Vec3 returnValue = null;
         
         if(playerDeaths != null && !playerDeaths.isEmpty())
@@ -84,39 +49,48 @@ public class DeathPositions extends WorldSavedData
         
         return returnValue;
     }
+    public Vec3 peekDeathPoint(EntityPlayer player)
+        { return this.peekDeathPoint(player.username); }
     
-    public void addNewDeathPointForPlayer(EntityPlayer dead)
+    public void addDeathPoint(EntityPlayer dead)
     {
         if(dead != null)
         {
             String username = dead.username;
             Vec3 position = Vec3.createVectorHelper(dead.posX, dead.posY, dead.posZ);
             
-            Stack<Vec3> previousDeaths = this.getDeathPointsForPlayer(username);
-            previousDeaths.push(position);
+            this.addDeathPoint(username, position);
+        }
+    }
+    public void addDeathPoint(String username, Vec3 position)
+    {
+        if(!Strings.isNullOrEmpty(username) && position != null)
+        {
+            Stack<Vec3> deathPoints = this.deathPoints.get(username);
+            
+            if(deathPoints == null)
+            {
+                deathPoints = new Stack();
+                this.deathPoints.put(username, deathPoints);
+            }
+            
+            deathPoints.add(position);
             
             this.markDirty();
         }
     }
     
-    public Vec3 removeLastPointForPlayer(EntityPlayer player)
-    {
-        return player != null ? this.removeLastPointForPlayer(player.username) : null;
-    }
-    public Vec3 removeLastPointForPlayer(String username)
+    public Vec3 popDeathPoint(String username)
     {
         Vec3 returnValue = null;
         
-        if(username != null && !username.isEmpty())
+        if(!Strings.isNullOrEmpty(username))
         {
-            Stack<Vec3> deathStack = this.getDeathPointsForPlayer(username);
+            Stack<Vec3> deathStack = this.deathPoints.get(username);
             
-            if(deathStack != null)
+            if(deathStack != null && !deathStack.isEmpty())
             {
-                if(!deathStack.isEmpty())
-                    returnValue = deathStack.pop();
-                else
-                    this.deathPoints.remove(username);
+                returnValue = deathStack.pop();
                 
                 this.markDirty();
             }
@@ -124,46 +98,48 @@ public class DeathPositions extends WorldSavedData
         
         return returnValue;
     }
+    public Vec3 popDeathPoint(EntityPlayer player)
+        { return player != null ? this.popDeathPoint(player.username) : null; }
     
+    ///////////////////
+    // WorldSavedData
+    ///////////////////
     private static final String playersListTag = "SavedPlayerDeathsList";
     private static final String usernameTag = "PlayerUsername";
-    private static final String deathsTag = "PlayerDeaths";
+    private static final String deathPointsTag = "PlayerDeaths";
     
     @Override
     public void writeToNBT(NBTTagCompound nbttagcompound)
     {
-        NBTTagList players = new NBTTagList();
+        NBTTagList playersList = new NBTTagList();
         
         for(Map.Entry<String, Stack<Vec3>> toSave : this.deathPoints.entrySet())
         {
-            NBTTagCompound playerCompound = new NBTTagCompound();
+            //Skip empty stacks
+            if(toSave.getValue().isEmpty())
+                continue;
             
-            playerCompound.setString(usernameTag, toSave.getKey());
-            
+            NBTTagCompound playerData = new NBTTagCompound();
             NBTTagList deathPoints = new NBTTagList();
             
-            for(int i = 0; i < toSave.getValue().size(); ++i)
+            for(Vec3 position : toSave.getValue())
             {
-                Vec3 position = toSave.getValue().get(i);
+                NBTTagCompound positionNBT = new NBTTagCompound();
                 
-                if(position != null)
-                {
-                    NBTTagCompound positionData = new NBTTagCompound();
-                    
-                    positionData.setDouble("X", position.xCoord);
-                    positionData.setDouble("Y", position.yCoord);
-                    positionData.setDouble("Z", position.zCoord);
-                    
-                    deathPoints.appendTag(positionData);
-                }
+                positionNBT.setDouble("X", position.xCoord);
+                positionNBT.setDouble("Y", position.yCoord);
+                positionNBT.setDouble("Z", position.zCoord);
+                
+                deathPoints.appendTag(positionNBT);
             }
             
-            playerCompound.setTag(deathsTag, deathPoints);
+            playerData.setString(usernameTag, toSave.getKey());
+            playerData.setTag(deathPointsTag, deathPoints);
             
-            players.appendTag(playerCompound);
+            playersList.appendTag(playerData);
         }
         
-        nbttagcompound.setTag(playersListTag, players);
+        nbttagcompound.setTag(playersListTag, playersList);
     }
     
     @Override
@@ -181,9 +157,10 @@ public class DeathPositions extends WorldSavedData
             
             if(!username.isEmpty())
             {
-                NBTTagList savedDeathPoints = playerData.getTagList(deathsTag);
+                NBTTagList savedDeathPoints = playerData.getTagList(deathPointsTag);
                 
-                Stack<Vec3> deathPoints = savedDeathPoints.tagCount() > 0 ? new Stack() : null;
+                Stack<Vec3> deathPoints = savedDeathPoints.tagCount() > 0 ? new Stack()
+                                                                          : null;
                 
                 for(int j = 0; j < savedDeathPoints.tagCount(); ++j)
                 {
