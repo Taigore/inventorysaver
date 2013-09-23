@@ -185,7 +185,7 @@ public class TileEntityBag extends TileEntity implements IInventory
     @Override
     public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt)
     {
-        this.readFromNBT(pkt.customParam1);
+        this.readFromNBT(pkt.data);
     }
     
     ///////////////
@@ -249,7 +249,7 @@ public class TileEntityBag extends TileEntity implements IInventory
     @Override
     public void closeChest() {}
     @Override
-    public boolean isInvNameLocalized() { return false; }
+    public boolean isInvNameLocalized() { return true; }
     @Override
     public boolean isItemValidForSlot(int i, ItemStack itemstack) { return false; }
 }

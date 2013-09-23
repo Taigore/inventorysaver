@@ -28,7 +28,7 @@ public class ItemDeathCompass extends Item
         
         this.setMaxStackSize(64);
         this.setUnlocalizedName("compass.death");
-        this.func_111206_d(InventorySaver.resource("deathCompass"));
+        this.setTextureName(InventorySaver.resource("deathCompass"));
         this.setCreativeTab(CreativeTabs.tabTools);
         
         this.addCraftingRecipes();
@@ -40,7 +40,7 @@ public class ItemDeathCompass extends Item
     {
         this.itemIcon = new TextureDeathCompass(InventorySaver.resource("textures/item/deathCompass.png"));
         
-        ((TextureMap)par1IconRegister).setTextureEntry(this.func_111208_A(), (TextureAtlasSprite)this.itemIcon);
+        ((TextureMap)par1IconRegister).setTextureEntry(this.getIconString(), (TextureAtlasSprite)this.itemIcon);
     }
     
     public void addCraftingRecipes()

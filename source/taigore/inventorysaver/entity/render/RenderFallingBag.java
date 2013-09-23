@@ -40,7 +40,7 @@ public class RenderFallingBag extends Render
         {
             GL11.glPushMatrix();
             GL11.glTranslatef((float)rendX, (float)rendY, (float)rendZ);
-            this.func_110777_b(entityBag);
+            this.getEntityTexture(entityBag);
             GL11.glDisable(GL11.GL_LIGHTING);
             
             Tessellator tessellator = Tessellator.instance;
@@ -59,20 +59,16 @@ public class RenderFallingBag extends Render
             GL11.glPopMatrix();
         }
     }
-
-    protected ResourceLocation func_110783_a(EntityFallingBag entityBag)
+    
+    @Override
+    protected ResourceLocation getEntityTexture(Entity entityBag)
     {
-        return TextureMap.field_110575_b;
-    }
-
-    protected ResourceLocation func_110775_a(Entity par1Entity)
-    {
-        return this.func_110783_a((EntityFallingBag)par1Entity);
+        return TextureMap.locationBlocksTexture;
     }
 
     /**
      * Actually renders the given argument. This is a synthetic bridge method, always casting down its argument and then
-     * handing it off to a worker function which does the actual work. In all probabilty, the class Render is generic
+     * handing it off to a worker function which does the actual work. In all probability, the class Render is generic
      * (Render<T extends Entity) and this method has signature public void doRender(T entity, double d, double d1,
      * double d2, float f, float f1). But JAD is pre 1.5 so doesn't do that.
      */

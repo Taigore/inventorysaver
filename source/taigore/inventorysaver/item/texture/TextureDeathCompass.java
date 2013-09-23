@@ -17,7 +17,7 @@ public class TextureDeathCompass extends TextureCompass
     {
         EntityPlayer thePlayer = Minecraft.getMinecraft().thePlayer;
         
-        if (!this.field_110976_a.isEmpty() && thePlayer != null)
+        if (!this.framesTextureData.isEmpty() && thePlayer != null)
         {
             double targetAngle = 0.0D;
 
@@ -62,15 +62,15 @@ public class TextureDeathCompass extends TextureCompass
                 this.currentAngle += this.angleDelta;
             }
 
-            int i = (int)((this.currentAngle / (Math.PI * 2D) + 1.0D) * (double)this.field_110976_a.size()) % this.field_110976_a.size();
+            int i = (int)((this.currentAngle / (Math.PI * 2D) + 1.0D) * (double)this.framesTextureData.size()) % this.framesTextureData.size();
 
             while(i < 0)
-                 i = (i + this.field_110976_a.size()) % this.field_110976_a.size();
+                 i = (i + this.framesTextureData.size()) % this.framesTextureData.size();
 
-            if (i != this.field_110973_g)
+            if (i != this.frameCounter)
             {
-                this.field_110973_g = i;
-                TextureUtil.func_110998_a((int[])this.field_110976_a.get(this.field_110973_g), this.field_130223_c, this.field_130224_d, this.field_110975_c, this.field_110974_d, false, false);
+                this.frameCounter = i;
+                TextureUtil.uploadTextureSub((int[])this.framesTextureData.get(this.frameCounter), this.width, this.height, this.originX, this.originY, false, false);
             }
         }
     }

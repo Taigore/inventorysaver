@@ -31,7 +31,7 @@ public class GuiBag extends GuiContainer
 	protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3)
 	{
 		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-		this.mc.func_110434_K().func_110577_a(guiBackground);
+		this.mc.renderEngine.bindTexture(guiBackground);
 		this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, xSize, ySize);
 		
 		String playerName = ((ContainerBag)this.inventorySlots).bagInventory.ownerName;

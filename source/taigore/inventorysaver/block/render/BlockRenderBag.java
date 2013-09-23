@@ -183,7 +183,7 @@ public class BlockRenderBag implements ISimpleBlockRenderingHandler
             
             int color = block.colorMultiplier(world, x, y, z);
             
-            tsr.setTextureUV(block.getIcon(0, 0).getOriginX(), block.getIcon(0, 0).getOriginY());
+            tsr.setTextureUV(block.getIcon(0, 0).getMinU(), block.getIcon(0, 0).getMinV());
             tsr.setBrightness((int) (0.8f * block.getMixedBrightnessForBlock(world, x, y, z)));
             tsr.setColorOpaque_I(color);
             
