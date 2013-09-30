@@ -17,6 +17,7 @@ import taigore.inventorysaver.InventorySaver;
 import taigore.inventorysaver.item.texture.TextureDeathCompass;
 import taigore.inventorysaver.world.DeathPositions;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -27,9 +28,12 @@ public class ItemDeathCompass extends Item
         super(itemID);
         
         this.setMaxStackSize(64);
-        this.setUnlocalizedName("compass.death");
+        this.setUnlocalizedName("invsaver.deathcompass");
         this.setTextureName(InventorySaver.resource("deathCompass"));
         this.setCreativeTab(CreativeTabs.tabTools);
+        
+        GameRegistry.registerItem(this, "ItemDeathCompass");
+        LanguageRegistry.addName(this, "Death compass");
         
         this.addCraftingRecipes();
     }

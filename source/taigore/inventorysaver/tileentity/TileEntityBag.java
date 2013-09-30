@@ -24,6 +24,8 @@ public class TileEntityBag extends TileEntity implements IInventory
     
     public String ownerName;
     
+    public long creationTime = -1;
+    
     //METHODS
     public TileEntityBag() {}
     
@@ -87,6 +89,23 @@ public class TileEntityBag extends TileEntity implements IInventory
     ///////////////
     // TileEntity
     ///////////////
+    @Override
+    public void updateEntity()
+    {
+    	if(this.creationTime <= 0) this.creationTime = this.worldObj.getTotalWorldTime();
+    	else
+    	{
+    		int cleanupTime = InventorySaver.instance.cleanupTime.getValue();
+    		
+    		if(cleanupTime > 0
+    		&& this.creationTime + cleanupTime * 3600 * 20 < this.worldObj.getTotalWorldTime())
+    		{
+    			this.worldObj.setBlockToAir(this.xCoord, this.yCoord, this.zCoord);
+    			this.invalidate();
+    		}
+    	}
+    }
+    
     /**
      * Saves the inventory contents.
      */
@@ -99,6 +118,8 @@ public class TileEntityBag extends TileEntity implements IInventory
             
             if(!Strings.isNullOrEmpty(this.ownerName))
                 toWriteOn.setString("Owner", this.ownerName);
+            
+            toWriteOn.setLong("Creation", this.creationTime);
             
             for(int slot = 0; slot < this.getSizeInventory(); ++slot)
             {
@@ -127,6 +148,8 @@ public class TileEntityBag extends TileEntity implements IInventory
             
             this.ownerName = toRead.getString("Owner");
             
+            this.creationTime = toRead.getLong("Creation");
+            
             for(int slot = 0; slot < this.getSizeInventory(); ++slot)
             {
                 ItemStack loaded = null;
@@ -145,7 +168,7 @@ public class TileEntityBag extends TileEntity implements IInventory
      */
     public void giveStack(EntityPlayer receiver)
     {
-        if(!InventorySaver.instance.settings.get("ProtectLoot", false)
+        if(!InventorySaver.instance.protectLoot.getValue()
          || Strings.isNullOrEmpty(this.ownerName)
          || receiver.username.equals(this.ownerName))
         {
@@ -243,7 +266,7 @@ public class TileEntityBag extends TileEntity implements IInventory
     @Override
     public int getInventoryStackLimit() { return 64; }
     @Override
-    public boolean isUseableByPlayer(EntityPlayer user) { return !this.isInvalid() && (!InventorySaver.instance.settings.get("ProtectLoot", false) || Strings.isNullOrEmpty(this.ownerName) || user.username.equals(this.ownerName)); }
+    public boolean isUseableByPlayer(EntityPlayer user) { return !this.isInvalid() && (!InventorySaver.instance.protectLoot.getValue() || Strings.isNullOrEmpty(this.ownerName) || user.username.equals(this.ownerName)); }
     @Override
     public void openChest() {}
     @Override

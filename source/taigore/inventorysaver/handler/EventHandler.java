@@ -29,7 +29,7 @@ public class EventHandler
     	ArrayList<EntityItem> drops = dropEvent.drops;
     	World currentWorld = droppingPlayer.worldObj;
     	
-    	if(!drops.isEmpty() && InventorySaver.instance.blockBag != null && droppingPlayer.posY > 0)
+    	if(!drops.isEmpty() && InventorySaver.instance.bag.isRegistered() && droppingPlayer.posY > 0)
     	{
     	    InventorySaver.log.info("Dropping bag!");
     	    
@@ -71,9 +71,9 @@ public class EventHandler
             	int posY = MathHelper.floor_double(droppingPlayer.posY);
             	int posZ = MathHelper.floor_double(droppingPlayer.posZ);
             	
-            	currentWorld.setBlock(posX, posY, posZ, InventorySaver.instance.blockBag.blockID);
+            	currentWorld.setBlock(posX, posY, posZ, InventorySaver.instance.bag.getBlock().blockID);
             	currentWorld.setBlockTileEntity(posX, posY, posZ, bag);
-            	currentWorld.scheduleBlockUpdate(posX, posY, posZ, InventorySaver.instance.blockBag.blockID, 2);
+            	currentWorld.scheduleBlockUpdate(posX, posY, posZ, InventorySaver.instance.bag.getBlock().blockID, 2);
         	}
         	else if(!currentWorld.isRemote)
         	{
@@ -91,7 +91,7 @@ public class EventHandler
         	InventorySaver.log.info(String.format("%d items were not stored", drops.size()));
     	}
     	
-    	if(InventorySaver.instance.itemDeathCompass != null)
+    	if(InventorySaver.instance.compass.isRegistered())
     	{
         	InventorySaver.log.info("Adding death position");
         	DeathPositions.getDeathPositions(currentWorld).addDeathPoint(droppingPlayer);
@@ -103,7 +103,7 @@ public class EventHandler
 	@ForgeSubscribe
 	public void loadDeathData(WorldEvent.Load event)
 	{
-	    if(!event.world.isRemote && InventorySaver.instance.itemDeathCompass != null)
+	    if(!event.world.isRemote && InventorySaver.instance.compass.isRegistered())
 	    {
 	        DeathPositions.getDeathPositions(event.world);
 	        InventorySaver.log.info("Loaded death position data");

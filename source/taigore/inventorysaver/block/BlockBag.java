@@ -2,6 +2,8 @@ package taigore.inventorysaver.block;
 
 import java.util.Random;
 
+import cpw.mods.fml.common.registry.GameRegistry;
+
 import net.minecraft.block.BlockSand;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -10,6 +12,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityFallingSand;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -41,7 +44,9 @@ public class BlockBag extends BlockSand implements ITileEntityProvider
         this.maxY = 10.0f / 16;
         this.maxZ = 0.75f;
         
-        this.setUnlocalizedName("taigore.bag");
+        this.setUnlocalizedName("invsaver.bag");
+        GameRegistry.registerBlock(this, ItemBlock.class, "BlockBag");
+        GameRegistry.registerTileEntity(TileEntityBag.class, "TInvSavBag");
     }
     
     @Override
@@ -56,8 +61,7 @@ public class BlockBag extends BlockSand implements ITileEntityProvider
     public void updateTick(World world, int posX, int posY, int posZ, Random par5Random)
     {
       //If adjacent to lava
-        if(!InventorySaver.instance.settings.get("IgnoreLava", false)
-        && !InventorySaver.instance.settings.get("ProtectLoot", false)
+        if(!InventorySaver.instance.ignoreLava.getValue()
         &&(world.getBlockMaterial(posX + 1, posY, posZ) == Material.lava
         || world.getBlockMaterial(posX - 1, posY, posZ) == Material.lava
         || world.getBlockMaterial(posX, posY + 1, posZ) == Material.lava
@@ -84,8 +88,7 @@ public class BlockBag extends BlockSand implements ITileEntityProvider
             
             world.setBlockToAir(posX, posY, posZ);
         }
-        else if(InventorySaver.instance.settings.get("BagGravity", false)
-            && !InventorySaver.instance.settings.get("ProtectLoot", false)
+        else if(InventorySaver.instance.bagGravity.getValue()
             && !world.isRemote)
         {
             this.tryToFall(world, posX, posY, posZ);

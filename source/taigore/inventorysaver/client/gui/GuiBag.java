@@ -15,7 +15,7 @@ import taigore.inventorysaver.tileentity.TileEntityBag;
 
 public class GuiBag extends GuiContainer
 {
-    public static final ResourceLocation guiBackground = new ResourceLocation(InventorySaver.modID.toLowerCase(), "textures/gui/BagGui.png");
+    public static final ResourceLocation guiBackground = InventorySaver.resourceLoc("textures/gui/BagGui.png");
     
 	public GuiBag(InventoryPlayer playerInventory, TileEntityBag openedBag)
 	{

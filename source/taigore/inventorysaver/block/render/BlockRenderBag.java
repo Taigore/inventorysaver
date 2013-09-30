@@ -260,7 +260,7 @@ public class BlockRenderBag implements ISimpleBlockRenderingHandler
     @Override
     public boolean shouldRender3DInInventory() { return true; }
     @Override
-    public int getRenderId() { return InventorySaver.instance.blockBag.blockID; }
+    public int getRenderId() { return InventorySaver.instance.bag.getValue(); }
     //This block should never end up in an inventory
     //I'll add a placeholder another time
     @Override

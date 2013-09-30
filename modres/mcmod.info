@@ -3,7 +3,7 @@
 "modid": "Taigore_InventorySaver",
 "name": "Inventory Saver",
 "description": "Modifies what happens at player's death, putting all their drops into a bag, that is not affected by item despawn time. No more mindless rushing!",
-"version": "3.2",
+"version": "3.3",
 "credits": "A cute little mod by Taigore.",
 "logoFile": "",
 "mcversion": "1.6.2",

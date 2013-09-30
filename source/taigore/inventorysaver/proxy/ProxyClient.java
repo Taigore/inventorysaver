@@ -10,11 +10,9 @@ public class ProxyClient extends ProxyCommon
 {
 	//Client only
 	@Override
-	public void registerBlocks()
+	public void registerBlockRender()
 	{
-	    super.registerBlocks();
-	    
-	    if(InventorySaver.instance.blockBag != null)
+	    if(InventorySaver.instance.bag.isRegistered())
 	        RenderingRegistry.registerBlockHandler(new BlockRenderBag());
 	    else
 	        InventorySaver.log.info("Skipped block renderer registration: no block bag available");
@@ -25,7 +23,7 @@ public class ProxyClient extends ProxyCommon
 	{
 	    super.registerEntities();
 	    
-	    if(InventorySaver.instance.blockBag != null)
+	    if(InventorySaver.instance.bag.isRegistered())
 	        RenderingRegistry.registerEntityRenderingHandler(EntityFallingBag.class, new RenderFallingBag());
 	    else
 	        InventorySaver.log.info("Skipped entity renderer registration: no block bag available");
