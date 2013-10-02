@@ -40,8 +40,9 @@ public class RenderFallingBag extends Render
         {
             GL11.glPushMatrix();
             GL11.glTranslatef((float)rendX, (float)rendY, (float)rendZ);
-            this.getEntityTexture(entityBag);
             GL11.glDisable(GL11.GL_LIGHTING);
+            
+            this.bindTexture(TextureMap.locationBlocksTexture);
             
             Tessellator tessellator = Tessellator.instance;
             tessellator.startDrawingQuads();
@@ -63,7 +64,7 @@ public class RenderFallingBag extends Render
     @Override
     protected ResourceLocation getEntityTexture(Entity entityBag)
     {
-        return TextureMap.locationBlocksTexture;
+        return InventorySaver.resourceLoc("textures/blocks/blockbag.png");
     }
 
     /**
