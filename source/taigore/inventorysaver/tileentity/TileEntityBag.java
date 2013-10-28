@@ -189,7 +189,9 @@ public class TileEntityBag extends TileEntity implements IInventory
                                                  1.1f + this.yCoord,
                                                  0.5f + this.zCoord,
                                                  first);
-                item.setVelocity(0.0f, 0.08f, 0.0f);
+                item.motionX = 0.0f;
+                item.motionY = 0.8f;
+                item.motionZ = 0.0f;
                 
                 this.worldObj.spawnEntityInWorld(item);
                 this.onInventoryChanged();
