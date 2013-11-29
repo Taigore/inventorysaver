@@ -1,8 +1,0 @@
-blockbag.png
-From ( 0,  0) to ( 5,  5): top/bottom bumps wide area
-From ( 0,  6) to ( 5, 11): side bumps wide area
-From ( 0, 12) to ( 3, 15): top opening
-From ( 4, 12) to ( 5, 12): string
-From ( 6,  0) to (11,  0): 1 wide strips
-
-Keep the proportions the same for higher resolution textures and all will be fine. (I hope)
