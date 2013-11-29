@@ -24,7 +24,7 @@ public class ForgeConfiguration
 			throw new IllegalArgumentException("null configuration file provided");
 	}
 	
-	public Setting<Boolean> getSetting(String category, String name, boolean defaultValue, SettingLogic<Boolean> logic)
+	public Setting<Boolean> getSetting(String name, String category, boolean defaultValue, SettingLogic<Boolean> logic)
 	{
 		if(category == null)
 			category = Configuration.CATEGORY_GENERAL;
@@ -36,7 +36,7 @@ public class ForgeConfiguration
 		
 		return value;
 	}
-	public Setting<Integer> getSetting(String category, String name, int defaultValue, SettingLogic<Integer> logic)
+	public Setting<Integer> getSetting(String name, String category, int defaultValue, SettingLogic<Integer> logic)
 	{
 		if(category == null)
 			category = Configuration.CATEGORY_GENERAL;
@@ -48,7 +48,7 @@ public class ForgeConfiguration
 		
 		return value;
 	}
-	public Setting<Double> getSetting(String category, String name, double defaultValue, SettingLogic<Double> logic)
+	public Setting<Double> getSetting(String name, String category, double defaultValue, SettingLogic<Double> logic)
 	{
 		if(category == null)
 			category = Configuration.CATEGORY_GENERAL;
@@ -60,7 +60,7 @@ public class ForgeConfiguration
 		
 		return value;
 	}
-	public Setting<String> getSetting(String category, String name, String defaultValue, SettingLogic<String> logic)
+	public Setting<String> getSetting(String name, String category, String defaultValue, SettingLogic<String> logic)
 	{
 		if(category == null)
 			category = Configuration.CATEGORY_GENERAL;
