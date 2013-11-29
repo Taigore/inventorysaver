@@ -19,6 +19,11 @@ public class Setting<Type>
 		property_ = property;
 	}
 	
+	String getName()
+	{
+		return property_.getName();
+	}
+	
 	public Type read()
 	{
 		Type value = null;

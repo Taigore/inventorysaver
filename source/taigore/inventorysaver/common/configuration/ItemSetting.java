@@ -1,5 +1,6 @@
 package taigore.inventorysaver.common.configuration;
 
+import taigore.inventorysaver.InventorySaver;
 import net.minecraft.item.Item;
 
 public class ItemSetting
@@ -19,8 +20,33 @@ public class ItemSetting
 	{
 		final Integer itemID = configID_.read();
 		
-		if(itemID > 0)
-			itemInstance_ = logic_.register(itemID);
+		try
+		{
+			if(itemID > 0)
+				itemInstance_ = logic_.register(itemID);
+			
+			String logMessage;
+			
+			if(itemInstance_ != null)
+				logMessage = String.format("Registered item %s with ID &d",
+										   itemInstance_.getStatName(),
+										   itemID);
+			else
+				logMessage = String.format("Skipped item %s (Config ID: %d)",
+										   configID_.getName(),
+										   itemID);
+			
+			InventorySaver.log.config(logMessage);
+		}
+		catch(Exception e)
+		{
+			String error = String.format("Unable to register item %s with ID %d:\n%s",
+										 configID_.getName(),
+										 itemID,
+										 e.getMessage());
+			
+			InventorySaver.log.warning(error);
+		}
 	}
 	
 	public Item getItem()
