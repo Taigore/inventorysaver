@@ -1,4 +1,4 @@
-package taigore.inventorysaver.constants;
+package taigore.inventorysaver.main;
 
 public class Reference
 {
