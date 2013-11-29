@@ -24,6 +24,11 @@ public class Setting<Type>
 		return property_.getName();
 	}
 	
+	public void setComment(String comment)
+	{
+		property_.comment = comment != null ? comment : "";
+	}
+	
 	public Type read()
 	{
 		Type value = null;

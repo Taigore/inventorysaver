@@ -1,15 +1,15 @@
 package taigore.inventorysaver.common.configuration;
 
-import taigore.inventorysaver.InventorySaver;
+import taigore.inventorysaver.main.InventorySaver;
 import net.minecraft.item.Item;
 
-public class ItemSetting
+public class ItemSetting<Type extends Item>
 {
 	private Setting<Integer> configID_;
-	private RegistrationLogic<? extends Item> logic_;
-	private Item itemInstance_;
+	private RegistrationLogic<Type> logic_;
+	private Type itemInstance_;
 	
-	ItemSetting(Setting<Integer> configID, RegistrationLogic<? extends Item> logic)
+	ItemSetting(Setting<Integer> configID, RegistrationLogic<Type> logic)
 	{
 		configID_ = configID;
 		logic_ = logic;
@@ -49,7 +49,7 @@ public class ItemSetting
 		}
 	}
 	
-	public Item getItem()
+	public Type getItem()
 	{
 		return itemInstance_;
 	}
@@ -57,5 +57,10 @@ public class ItemSetting
 	public boolean available()
 	{
 		return itemInstance_ != null;
+	}
+	
+	public void setComment(String comment)
+	{
+		configID_.setComment(comment);
 	}
 }
