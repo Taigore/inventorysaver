@@ -1,4 +1,4 @@
-package taigore.inventorysaver.entity.render;
+package taigore.inventorysaver.bag.client;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -12,8 +12,8 @@ import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
 
-import taigore.inventorysaver.InventorySaver;
-import taigore.inventorysaver.entity.EntityFallingBag;
+import taigore.inventorysaver.bag.EntityFallingBag;
+import taigore.inventorysaver.main.InventorySaver;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 

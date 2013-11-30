@@ -1,6 +1,6 @@
-package taigore.inventorysaver.entity;
+package taigore.inventorysaver.bag;
 
-import taigore.inventorysaver.InventorySaver;
+import taigore.inventorysaver.main.InventorySaver;
 import net.minecraft.entity.item.EntityFallingSand;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;

@@ -1,7 +1,8 @@
-package taigore.inventorysaver.tileentity;
+package taigore.inventorysaver.bag;
 
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,15 +13,15 @@ import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
-import taigore.inventorysaver.InventorySaver;
+import taigore.inventorysaver.main.InventorySaver;
 
 import com.google.common.base.Strings;
 
 public class TileEntityBag extends TileEntity implements IInventory
 {
     //FIELDS
-    private ItemStack[] itemsInventory = new ItemStack[36];
-    private ItemStack[] armorInventory = new ItemStack[4];
+    private List<ItemStack> itemsInventory_ = new LinkedList();
+    private ItemStack[] armorInventory_ = new ItemStack[4];
     
     public String ownerName;
     
@@ -38,39 +39,29 @@ public class TileEntityBag extends TileEntity implements IInventory
      * All items successfully added to the inventory are removed from their container.
      * All armor items get removed from armorItems, and may end in otherItems if not added.
      */
-    public TileEntityBag(String ownerName, ItemStack[] armorItems, Collection<ItemStack> otherItems)
+    public TileEntityBag(String ownerName, ItemStack[] armorItems, ItemStack[] otherItems)
     {
         this.ownerName = ownerName;
         
         if(armorItems != null)
         {
-            for(int i = 0; i < armorItems.length; ++i)
-            {
-                if(armorItems[i] != null)
-                {
-                    if(i < this.armorInventory.length)
-                        this.armorInventory[i] = armorItems[i];
-                    else
-                        otherItems.add(armorItems[i]);
-                    
-                    armorItems[i] = null;
-                }
-            }
+        	try
+        	{
+	        	for(int i = 0; i < armorInventory_.length; ++i)
+	        		armorInventory_[i] = armorItems[i];
+	        	
+	        	Arrays.fill(armorItems, null);
+        	}
+        	catch(ArrayIndexOutOfBoundsException e)
+        	{
+        		InventorySaver.log.severe("Armor items was shorter than 4 slots");
+        	}
         }
         
         if(otherItems != null)
         {
-            int slot = 0;
-            
-            for(Iterator<ItemStack> iter = otherItems.iterator(); iter.hasNext() && slot < this.itemsInventory.length;)
-            {
-                ItemStack next = iter.next();
-                
-                if(next != null)
-                    this.itemsInventory[slot++] = next;
-                
-                iter.remove();
-            }
+        	itemsInventory_.addAll(Arrays.asList(otherItems));
+            Arrays.fill(otherItems, null);
         }
     }
     
@@ -79,11 +70,12 @@ public class TileEntityBag extends TileEntity implements IInventory
      */
     public boolean isEmpty()
     {
-        for(int i = 0; i < this.getSizeInventory(); ++i)
-            if(this.getStackInSlot(i) != null)
-                return false;
+        boolean isEmpty = itemsInventory_.isEmpty();
         
-        return true;
+        for(int i = 0; isEmpty && i < armorInventory_.length; ++i)
+        	isEmpty = armorInventory_[i] == null;
+        
+        return isEmpty;
     }
     
     ///////////////
@@ -95,10 +87,11 @@ public class TileEntityBag extends TileEntity implements IInventory
     	if(this.creationTime <= 0) this.creationTime = this.worldObj.getTotalWorldTime();
     	else
     	{
-    		int cleanupTime = InventorySaver.instance.cleanupTime.getValue();
+    		final long cleanupTime = InventorySaver.instance.configuration.cleanupTime.read() * 3600 * 20;
+    		final long elapsedTicks = this.worldObj.getTotalWorldTime() - this.creationTime;
     		
     		if(cleanupTime > 0
-    		&& this.creationTime + cleanupTime * 3600 * 20 < this.worldObj.getTotalWorldTime())
+    		&& elapsedTicks > cleanupTime)
     		{
     			this.worldObj.setBlockToAir(this.xCoord, this.yCoord, this.zCoord);
     			this.invalidate();
@@ -168,9 +161,11 @@ public class TileEntityBag extends TileEntity implements IInventory
      */
     public void giveStack(EntityPlayer receiver)
     {
-        if(!InventorySaver.instance.protectLoot.getValue()
-         || Strings.isNullOrEmpty(this.ownerName)
-         || receiver.username.equals(this.ownerName))
+    	final boolean canBeLooted = !InventorySaver.instance.configuration.protectLoot.read();
+    	
+        if(canBeLooted
+        || Strings.isNullOrEmpty(this.ownerName)
+        || receiver.username.equals(this.ownerName))
         {
             ItemStack first = null;
             
@@ -219,16 +214,18 @@ public class TileEntityBag extends TileEntity implements IInventory
     @Override
     public ItemStack getStackInSlot(int slotNum) throws ArrayIndexOutOfBoundsException
     {
-        return slotNum < this.itemsInventory.length ? this.itemsInventory[slotNum] : this.armorInventory[slotNum - this.itemsInventory.length];
+    	
+    	
+        return slotNum < this.itemsInventory_.length ? this.itemsInventory_[slotNum] : this.armorInventory_[slotNum - this.itemsInventory_.length];
     }
     
     @Override
     public void setInventorySlotContents(int slotNum, ItemStack toSet) throws ArrayIndexOutOfBoundsException
     {
-        if(slotNum < this.itemsInventory.length)
-            this.itemsInventory[slotNum] = toSet;
+        if(slotNum < this.itemsInventory_.length)
+            this.itemsInventory_[slotNum] = toSet;
         else
-            this.armorInventory[slotNum - this.itemsInventory.length] = toSet;
+            this.armorInventory_[slotNum - this.itemsInventory_.length] = toSet;
     }
     
     @Override
@@ -259,16 +256,33 @@ public class TileEntityBag extends TileEntity implements IInventory
         else
             this.getWorldObj().scheduleBlockUpdate(this.xCoord, this.yCoord, this.zCoord, this.getWorldObj().getBlockId(this.xCoord, this.yCoord, this.zCoord), 2);
     }
+    
     @Override
-    public int getSizeInventory() { return this.itemsInventory.length + this.armorInventory.length; }
+    public boolean isUseableByPlayer(EntityPlayer user)
+    {
+    	boolean canUse = !this.isInvalid();
+    	
+    	if(canUse)
+    	{
+    		final boolean isOwnerNotValid = Strings.isNullOrEmpty(this.ownerName);
+    		
+    		final boolean isLootProtected = !InventorySaver.instance.configuration.protectLoot.read(); 
+    		final boolean isOwner = user.username.equals(this.ownerName);
+    		
+    		canUse = isOwnerNotValid || (isOwner && isLootProtected);
+    	}
+    	
+    	return canUse;
+    }
+    
+    @Override
+    public int getSizeInventory() { return this.itemsInventory_.length + this.armorInventory_.length; }
     @Override
     public ItemStack getStackInSlotOnClosing(int slotNum) { return null; }
     @Override
     public String getInvName() { return String.format("Bag of %s", this.ownerName); }
     @Override
     public int getInventoryStackLimit() { return 64; }
-    @Override
-    public boolean isUseableByPlayer(EntityPlayer user) { return !this.isInvalid() && (!InventorySaver.instance.protectLoot.getValue() || Strings.isNullOrEmpty(this.ownerName) || user.username.equals(this.ownerName)); }
     @Override
     public void openChest() {}
     @Override

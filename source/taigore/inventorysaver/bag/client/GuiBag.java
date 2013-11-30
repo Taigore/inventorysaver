@@ -1,4 +1,4 @@
-package taigore.inventorysaver.client.gui;
+package taigore.inventorysaver.bag.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -9,9 +9,9 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
-import taigore.inventorysaver.InventorySaver;
-import taigore.inventorysaver.inventory.ContainerBag;
-import taigore.inventorysaver.tileentity.TileEntityBag;
+import taigore.inventorysaver.bag.ContainerBag;
+import taigore.inventorysaver.bag.TileEntityBag;
+import taigore.inventorysaver.main.InventorySaver;
 
 public class GuiBag extends GuiContainer
 {

@@ -1,8 +1,6 @@
-package taigore.inventorysaver.block;
+package taigore.inventorysaver.bag;
 
 import java.util.Random;
-
-import cpw.mods.fml.common.registry.GameRegistry;
 
 import net.minecraft.block.BlockSand;
 import net.minecraft.block.ITileEntityProvider;
@@ -18,9 +16,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import taigore.inventorysaver.InventorySaver;
-import taigore.inventorysaver.entity.EntityFallingBag;
-import taigore.inventorysaver.tileentity.TileEntityBag;
+import taigore.inventorysaver.main.InventorySaver;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 public class BlockBag extends BlockSand implements ITileEntityProvider
 {
@@ -60,8 +57,11 @@ public class BlockBag extends BlockSand implements ITileEntityProvider
      */
     public void updateTick(World world, int posX, int posY, int posZ, Random par5Random)
     {
+    	final boolean lavaImmunity = InventorySaver.instance.configuration.ignoreLava.read();
+    	final boolean canFall = InventorySaver.instance.configuration.bagGravity.read();
+    	
       //If adjacent to lava
-        if(!InventorySaver.instance.ignoreLava.getValue()
+        if(!lavaImmunity
         &&(world.getBlockMaterial(posX + 1, posY, posZ) == Material.lava
         || world.getBlockMaterial(posX - 1, posY, posZ) == Material.lava
         || world.getBlockMaterial(posX, posY + 1, posZ) == Material.lava
@@ -88,8 +88,8 @@ public class BlockBag extends BlockSand implements ITileEntityProvider
             
             world.setBlockToAir(posX, posY, posZ);
         }
-        else if(InventorySaver.instance.bagGravity.getValue()
-            && !world.isRemote)
+        else if(canFall
+             && !world.isRemote)
         {
             this.tryToFall(world, posX, posY, posZ);
         }
