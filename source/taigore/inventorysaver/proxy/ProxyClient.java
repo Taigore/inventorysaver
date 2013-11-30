@@ -1,9 +1,9 @@
 package taigore.inventorysaver.proxy;
 
-import taigore.inventorysaver.InventorySaver;
-import taigore.inventorysaver.block.render.BlockRenderBag;
-import taigore.inventorysaver.entity.EntityFallingBag;
-import taigore.inventorysaver.entity.render.RenderFallingBag;
+import taigore.inventorysaver.bag.EntityFallingBag;
+import taigore.inventorysaver.bag.client.BlockRenderBag;
+import taigore.inventorysaver.bag.client.RenderFallingBag;
+import taigore.inventorysaver.main.InventorySaver;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
 public class ProxyClient extends ProxyCommon
@@ -12,10 +12,10 @@ public class ProxyClient extends ProxyCommon
 	@Override
 	public void registerBlockRender()
 	{
-	    if(InventorySaver.instance.bag.isRegistered())
+	    if(InventorySaver.instance.configuration.bag.available())
 	        RenderingRegistry.registerBlockHandler(new BlockRenderBag());
 	    else
-	        InventorySaver.log.info("Skipped block renderer registration: no block bag available");
+	        InventorySaver.log.info("Skipped block renderer registration: no bag block available");
 	}
 	
 	@Override
@@ -23,9 +23,9 @@ public class ProxyClient extends ProxyCommon
 	{
 	    super.registerEntities();
 	    
-	    if(InventorySaver.instance.bag.isRegistered())
+	    if(InventorySaver.instance.configuration.bag.available())
 	        RenderingRegistry.registerEntityRenderingHandler(EntityFallingBag.class, new RenderFallingBag());
 	    else
-	        InventorySaver.log.info("Skipped entity renderer registration: no block bag available");
+	        InventorySaver.log.info("Skipped entity renderer registration: no bag block available");
 	}
 }
