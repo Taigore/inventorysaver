@@ -2,9 +2,9 @@ package taigore.inventorysaver.handler;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import taigore.inventorysaver.client.gui.GuiBag;
-import taigore.inventorysaver.inventory.ContainerBag;
-import taigore.inventorysaver.tileentity.TileEntityBag;
+import taigore.inventorysaver.bag.ContainerBag;
+import taigore.inventorysaver.bag.TileEntityBag;
+import taigore.inventorysaver.bag.client.GuiBag;
 import cpw.mods.fml.common.network.IGuiHandler;
 
 public class GuiHandler implements IGuiHandler
@@ -14,9 +14,9 @@ public class GuiHandler implements IGuiHandler
 	{
 		if(ID == 1) //Arg1 = x, arg2 = y, arg3 = z
 		{
-			TileEntityBag clickedBag = (TileEntityBag)world.getBlockTileEntity(arg1, arg2, arg3);
+			final TileEntityBag clickedBag = (TileEntityBag)world.getBlockTileEntity(arg1, arg2, arg3);
 			
-			return new ContainerBag(player.inventory, clickedBag);
+			return new ContainerBag(player.inventory, clickedBag.inventory_);
 		}
 		return null;
 	}
@@ -26,9 +26,9 @@ public class GuiHandler implements IGuiHandler
 	{
 		if(ID == 1)
 		{
-		    TileEntityBag clickedBag = (TileEntityBag)world.getBlockTileEntity(arg1, arg2, arg3);
+		    final TileEntityBag clickedBag = (TileEntityBag)world.getBlockTileEntity(arg1, arg2, arg3);
 			
-			return new GuiBag(player.inventory, clickedBag);
+			return new GuiBag(player.inventory, clickedBag.inventory_);
 		}
 		return null;
 	}

@@ -1,6 +1,6 @@
 package taigore.inventorysaver.main;
 
-import taigore.inventorysaver.block.BlockBag;
+import taigore.inventorysaver.bag.BlockBag;
 import taigore.inventorysaver.common.configuration.BlockSetting;
 import taigore.inventorysaver.common.configuration.ForgeConfiguration;
 import taigore.inventorysaver.common.configuration.ItemSetting;

@@ -30,7 +30,7 @@ public class RenderFallingBag extends Render
     public void doRenderFallingBag(EntityFallingBag entityBag, double rendX, double rendY, double rendZ, float rendYaw, float interpolation)
     {
         World world  = entityBag.worldObj;
-        Block block = InventorySaver.instance.bag.getBlock();
+        Block block = InventorySaver.instance.configuration.bag.getBlock();
         
         int posX = MathHelper.floor_double(entityBag.posX);
         int posY = MathHelper.floor_double(entityBag.posY);

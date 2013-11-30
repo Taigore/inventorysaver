@@ -15,10 +15,10 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class ContainerBag extends Container
 {
-	public final TileEntityBag bagInventory;
+	public final InventoryBag bagInventory;
 	public final InventoryPlayer playerInventory;
 	
-	public ContainerBag(InventoryPlayer playerInventory, TileEntityBag openedBag)
+	public ContainerBag(InventoryPlayer playerInventory, InventoryBag openedBag)
     {
         this.bagInventory = openedBag;
         this.playerInventory = playerInventory;
@@ -116,7 +116,7 @@ public class ContainerBag extends Container
 	 */
 	private class SlotBag extends Slot
 	{
-		public SlotBag(TileEntityBag managedBag, int slotIndex, int slotX, int slotY) { super(managedBag, slotIndex, slotX, slotY); }
+		public SlotBag(InventoryBag managedBag, int slotIndex, int slotX, int slotY) { super(managedBag, slotIndex, slotX, slotY); }
 		
 		@Override
 		public boolean isItemValid(ItemStack toCheck) { return false; }

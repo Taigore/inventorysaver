@@ -10,14 +10,14 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import taigore.inventorysaver.bag.ContainerBag;
-import taigore.inventorysaver.bag.TileEntityBag;
+import taigore.inventorysaver.bag.InventoryBag;
 import taigore.inventorysaver.main.InventorySaver;
 
 public class GuiBag extends GuiContainer
 {
     public static final ResourceLocation guiBackground = InventorySaver.resourceLoc("textures/gui/BagGui.png");
     
-	public GuiBag(InventoryPlayer playerInventory, TileEntityBag openedBag)
+	public GuiBag(InventoryPlayer playerInventory, InventoryBag openedBag)
 	{
 	    super(new ContainerBag(playerInventory, openedBag));
 	    this.xSize = 182;

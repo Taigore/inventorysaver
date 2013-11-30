@@ -2,7 +2,7 @@ package taigore.inventorysaver.handler;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.packet.Packet250CustomPayload;
-import taigore.inventorysaver.InventorySaver;
+import taigore.inventorysaver.main.InventorySaver;
 import taigore.inventorysaver.network.packet.Packet250DeathUpdate;
 import cpw.mods.fml.common.IPlayerTracker;
 import cpw.mods.fml.common.network.PacketDispatcher;

@@ -18,13 +18,13 @@ public class EntityFallingBag extends EntityFallingSand
     {
         super(par1World);
         
-        this.blockID = InventorySaver.instance.bag.getBlock().blockID;
+        this.blockID = InventorySaver.instance.configuration.bag.getBlock().blockID;
         this.metadata = 0;
         
     }
     public EntityFallingBag(World par1World, double par2, double par4, double par6)
     {
-        super(par1World, par2, par4, par6, InventorySaver.instance.bag.getBlock().blockID, 0);
+        super(par1World, par2, par4, par6, InventorySaver.instance.configuration.bag.getBlock().blockID, 0);
         
         this.setPosition(par2, par4, par6);
         this.motionX = 0.0D;

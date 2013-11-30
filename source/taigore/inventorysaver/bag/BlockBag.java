@@ -8,12 +8,11 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityFallingSand;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import taigore.inventorysaver.main.InventorySaver;
@@ -60,31 +59,16 @@ public class BlockBag extends BlockSand implements ITileEntityProvider
     	final boolean lavaImmunity = InventorySaver.instance.configuration.ignoreLava.read();
     	final boolean canFall = InventorySaver.instance.configuration.bagGravity.read();
     	
-      //If adjacent to lava
-        if(!lavaImmunity
-        &&(world.getBlockMaterial(posX + 1, posY, posZ) == Material.lava
-        || world.getBlockMaterial(posX - 1, posY, posZ) == Material.lava
-        || world.getBlockMaterial(posX, posY + 1, posZ) == Material.lava
-        || world.getBlockMaterial(posX, posY - 1, posZ) == Material.lava
-        || world.getBlockMaterial(posX, posY, posZ + 1) == Material.lava
-        || world.getBlockMaterial(posX, posY, posZ - 1) == Material.lava))
+    	final AxisAlignedBB expandedBB = AxisAlignedBB.getBoundingBox(posX - 0.1f, posX + 1.1f,
+    													   			  posY - 0.1f, posY + 1.1f,
+    													   			  posZ - 0.1f, posZ + 1.1f);
+    	final boolean nearLava = world.isAABBInMaterial(expandedBB, Material.lava); 
+    			
+        if(nearLava && !lavaImmunity)
         {
-            if(!world.isRemote)
-            {
-                TileEntityBag tileEntity = (TileEntityBag)world.getBlockTileEntity(posX, posY, posZ);
-                
-                for(int i = 0; i < tileEntity.getSizeInventory(); ++i)
-                {
-                    ItemStack toDrop = tileEntity.getStackInSlot(i);
-                    
-                    if(toDrop != null)
-                    {
-                        EntityItem dropped = new EntityItem(world, 0.5f + posX, 0.5f + posY, 0.5f + posZ, toDrop);
-                        
-                        world.spawnEntityInWorld(dropped);
-                    }
-                }
-            }
+        	TileEntityBag tileEntity = (TileEntityBag)world.getBlockTileEntity(posX, posY, posZ);
+        	
+            while(tileEntity.giveStack(null) != null) {}
             
             world.setBlockToAir(posX, posY, posZ);
         }
