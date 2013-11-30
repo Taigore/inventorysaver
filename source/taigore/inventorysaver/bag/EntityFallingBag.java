@@ -1,6 +1,7 @@
 package taigore.inventorysaver.bag;
 
 import taigore.inventorysaver.main.InventorySaver;
+import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityFallingSand;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
@@ -38,12 +39,19 @@ public class EntityFallingBag extends EntityFallingSand
     @Override
     public void onUpdate()
     {
-        int x = MathHelper.floor_double(this.posX);
-        int y = MathHelper.floor_double(this.posY);
-        int z = MathHelper.floor_double(this.posZ);
+        int x = MathHelper.floor_double(this.posX + this.width / 2);
+        int y = MathHelper.floor_double(this.posY + this.height / 2);
+        int z = MathHelper.floor_double(this.posZ + this.width / 2);
         
-        if(this.posY > 256 || (this.fallTime > 1 && !this.worldObj.isAirBlock(x, y, z)))
+        final boolean outOfBounds = y > worldObj.getHeight();
+        
+        final Block surroundingBlock = outOfBounds ? null : Block.blocksList[worldObj.getBlockId(x, y, z)];
+        final boolean canBePlaced = outOfBounds ? false :
+        										  surroundingBlock == null || surroundingBlock.isBlockReplaceable(worldObj, x, y, z);
+        
+        if(!canBePlaced)
         {
+        	//Keep entity form
             this.prevPosX = this.posX;
             this.prevPosY = this.posY;
             this.prevPosZ = this.posZ;

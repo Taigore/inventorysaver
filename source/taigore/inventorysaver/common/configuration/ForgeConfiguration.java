@@ -85,7 +85,7 @@ public class ForgeConfiguration
 		if(category == null)
 			category = Configuration.CATEGORY_ITEM;
 		
-		Setting<Integer> idConfig = getSettingI(category, itemName, defaultID, new SettingLogic<Integer>());
+		Setting<Integer> idConfig = getSettingI(itemName, category, defaultID, new SettingLogic<Integer>());
 		ItemSetting value = null;
 		
 		Validate.notNull(itemsToRegister_, "cannot register item after registerAll has been called");
@@ -104,7 +104,7 @@ public class ForgeConfiguration
 		if(category == null)
 			category = Configuration.CATEGORY_ITEM;
 		
-		Setting<Integer> idConfig = getSettingI(category, blockName, defaultID, new SettingLogic<Integer>());
+		Setting<Integer> idConfig = getSettingI(blockName, category, defaultID, new SettingLogic<Integer>());
 		BlockSetting value = null;
 		
 		Validate.notNull(blocksToRegister_, "cannot register block after registerAll has been called");

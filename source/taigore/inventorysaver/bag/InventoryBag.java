@@ -300,7 +300,7 @@ public class InventoryBag implements IInventory
         armorInventory_ = new ArmorInventory(armorItems);
     }
     
-    void moveIntoPlayerInventory(InventoryPlayer inventory)
+    public void moveIntoPlayerInventory(InventoryPlayer inventory)
     {
     	boolean changed = armorInventory_.moveIntoPlayerInventory(inventory)
     				   || itemsInventory_.moveIntoPlayerInventory(inventory);
@@ -422,7 +422,7 @@ public class InventoryBag implements IInventory
     {
 		final boolean isOwnerNotValid = Strings.isNullOrEmpty(this.ownerName);
 		
-		final boolean isLootProtected = !InventorySaver.instance.configuration.protectLoot.read(); 
+		final boolean isLootProtected = InventorySaver.instance.configuration.protectLoot.read(); 
 		final boolean isUserOwner = user.username.equals(this.ownerName);
 		
 		final boolean canUse = isOwnerNotValid || (isUserOwner || !isLootProtected);

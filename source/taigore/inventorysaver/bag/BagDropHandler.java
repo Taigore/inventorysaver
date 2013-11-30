@@ -7,7 +7,6 @@ import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.event.EventPriority;
 import net.minecraftforge.event.ForgeSubscribe;
@@ -44,7 +43,7 @@ public class BagDropHandler
 	    	
 	    	final boolean canCollectInventory = inventoryDrops && bagAvailable;
 	    	
-	    	if(canCollectInventory)
+	    	if(canCollectInventory && !currentWorld.isRemote)
 	    	{
 	    	    InventorySaver.log.info("Dropping bag!");
 	    	    
@@ -55,32 +54,16 @@ public class BagDropHandler
 	        	
 	        	TileEntityBag bag = new TileEntityBag(droppingPlayer.username, armorItems, otherItems);
 	        	
-	        	final boolean isWithinWorldY = 0 < droppingPlayer.posY && droppingPlayer.posY < currentWorld.getHeight();
-	        	
-	        	if(isWithinWorldY)
-	        	{
-	            	final int posX = MathHelper.floor_double(droppingPlayer.posX);
-	            	final int posY = MathHelper.floor_double(droppingPlayer.posY);
-	            	final int posZ = MathHelper.floor_double(droppingPlayer.posZ);
-	            	
-	            	final int blockID = InventorySaver.instance.configuration.bag.getBlock().blockID;
-	            	
-	            	currentWorld.setBlock(posX, posY, posZ, blockID);
-	            	currentWorld.setBlockTileEntity(posX, posY, posZ, bag);
-	            	currentWorld.scheduleBlockUpdate(posX, posY, posZ, blockID, 2);
-	        	}
-	        	else if(!currentWorld.isRemote)
-	        	{
-	        	    EntityFallingBag bagEntity = new EntityFallingBag(currentWorld,
-	        	                                                      droppingPlayer.posX,
-	        	                                                      droppingPlayer.posY,
-	        	                                                      droppingPlayer.posZ);
-	        	    NBTTagCompound tileEntityData = new NBTTagCompound();
-	        	    
-	        	    bag.writeToNBT(tileEntityData);
-	        	    bagEntity.fallingBlockTileEntityData = tileEntityData;
-	        	    currentWorld.spawnEntityInWorld(bagEntity);
-	        	}
+        	    EntityFallingBag bagEntity = new EntityFallingBag(currentWorld,
+        	                                                      droppingPlayer.posX,
+        	                                                      droppingPlayer.posY + 0.5f,
+        	                                                      droppingPlayer.posZ);
+        	    NBTTagCompound tileEntityData = new NBTTagCompound();
+        	    
+        	    bag.writeToNBT(tileEntityData);
+        	    bagEntity.fallingBlockTileEntityData = tileEntityData;
+        	    bagEntity.fallTime = 2;
+        	    currentWorld.spawnEntityInWorld(bagEntity);
 	    	}
 		}
     	

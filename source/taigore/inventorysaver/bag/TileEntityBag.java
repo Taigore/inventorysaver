@@ -79,8 +79,9 @@ public class TileEntityBag extends TileEntity
     		final long cleanupTime = InventorySaver.instance.configuration.cleanupTime.read() * 3600 * 20;
     		final long elapsedTicks = this.worldObj.getTotalWorldTime() - this.creationTime_;
     		
-    		if(cleanupTime > 0
-    		&& elapsedTicks > cleanupTime)
+    		final boolean expired = cleanupTime > 0 && elapsedTicks > cleanupTime;
+    		
+    		if(expired || inventory_.isEmpty())
     		{
     			this.worldObj.setBlockToAir(this.xCoord, this.yCoord, this.zCoord);
     			this.invalidate();
@@ -126,12 +127,6 @@ public class TileEntityBag extends TileEntity
         final NBTTagCompound tileEntityData = new NBTTagCompound();
         this.writeToNBT(tileEntityData);
         return new Packet132TileEntityData(this.xCoord, this.yCoord, this.zCoord, 0, tileEntityData);
-    }
-    
-    @Override
-    public boolean isInvalid()
-    {
-    	return super.isInvalid() || inventory_.isEmpty();
     }
     
     @Override

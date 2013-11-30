@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
@@ -42,11 +41,12 @@ public class GuiBag extends GuiContainer
 	public void initGui()
 	{
 		super.initGui();
-		
+		/*
 		int guiX = (this.width - this.xSize) / 2;
 		int guiY = (this.height - this.ySize) / 2;
 		
 		this.buttonList.add(new GuiButton(1, guiX + 9, guiY +  81, 16, 16, "T"));
+		//*/
 	}
 	/**
 	 * The only button on the interface tries taking everything from the inventory.
@@ -56,20 +56,8 @@ public class GuiBag extends GuiContainer
         if(pressed.id == 1)
         {
             ContainerBag container = (ContainerBag)this.inventorySlots;
-            
-            for(int i = 8; i >= 0; --i)
-            {
-                Slot clicked = container.getSlotFromInventory(container.bagInventory, i);
-                
-                this.handleMouseClick(clicked, clicked.slotNumber, 0, 1);
-            }
-            
-            for(int i = 9; i < container.bagInventory.getSizeInventory(); ++i)
-            {
-                Slot clicked = container.getSlotFromInventory(container.bagInventory, i);
-                
-                this.handleMouseClick(clicked, clicked.slotNumber, 0, 1);
-            }
+            container.bagInventory.moveIntoPlayerInventory(container.playerInventory);
+            //TODO Mandare pacchetto
         }
 	}
 }
